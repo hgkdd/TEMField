@@ -4,6 +4,7 @@ import time
 
 import numpy as np
 
+from PySide6.QtCore import QDate
 from matplotlib.backends.backend_qtagg import FigureCanvas
 #from matplotlib.backends.qt_compat import QtWidgets
 from matplotlib.figure import Figure

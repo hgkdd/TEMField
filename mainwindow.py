@@ -32,6 +32,8 @@ class Ui_MainWindow(object):
         self.actionLoad_Dot.setObjectName(u"actionLoad_Dot")
         self.actionQuit = QAction(MainWindow)
         self.actionQuit.setObjectName(u"actionQuit")
+        self.actionTest = QAction(MainWindow)
+        self.actionTest.setObjectName(u"actionTest")
         self.centralwidget = QWidget(MainWindow)
         self.centralwidget.setObjectName(u"centralwidget")
         self.MainWindow_tabWidget = QTabWidget(self.centralwidget)
@@ -261,6 +263,8 @@ class Ui_MainWindow(object):
         self.menubar.setGeometry(QRect(0, 0, 979, 37))
         self.menu_File = QMenu(self.menubar)
         self.menu_File.setObjectName(u"menu_File")
+        self.menuHelp = QMenu(self.menubar)
+        self.menuHelp.setObjectName(u"menuHelp")
         MainWindow.setMenuBar(self.menubar)
         self.statusbar = QStatusBar(MainWindow)
         self.statusbar.setObjectName(u"statusbar")
@@ -285,12 +289,16 @@ class Ui_MainWindow(object):
         QWidget.setTabOrder(self.EFieldWAV_scrollArea, self.Quit_pushButton)
 
         self.menubar.addAction(self.menu_File.menuAction())
+        self.menubar.addAction(self.menuHelp.menuAction())
         self.menu_File.addAction(self.actionAbout)
         self.menu_File.addAction(self.actionLoad_Dot)
         self.menu_File.addSeparator()
         self.menu_File.addAction(self.actionQuit)
+        self.menuHelp.addAction(self.actionTest)
 
         self.retranslateUi(MainWindow)
+        self.actionQuit.triggered.connect(MainWindow.close)
+        self.Quit_pushButton.clicked.connect(self.actionQuit.trigger)
 
         self.MainWindow_tabWidget.setCurrentIndex(0)
 
@@ -303,6 +311,7 @@ class Ui_MainWindow(object):
         self.actionAbout.setText(QCoreApplication.translate("MainWindow", u"About", None))
         self.actionLoad_Dot.setText(QCoreApplication.translate("MainWindow", u"Load Dot ...", None))
         self.actionQuit.setText(QCoreApplication.translate("MainWindow", u"Quit", None))
+        self.actionTest.setText(QCoreApplication.translate("MainWindow", u"Test", None))
         self.EFieldWAV_groupBox.setTitle(QCoreApplication.translate("MainWindow", u"E-Field Waveform", None))
         self.Sweep_groupBox.setTitle(QCoreApplication.translate("MainWindow", u"Sweep Control", None))
         self.f_start_label.setText(QCoreApplication.translate("MainWindow", u"Start:", None))
@@ -329,6 +338,7 @@ class Ui_MainWindow(object):
         self.Quit_pushButton.setText(QCoreApplication.translate("MainWindow", u"Quit", None))
         self.MainWindow_tabWidget.setTabText(self.MainWindow_tabWidget.indexOf(self.EFieldWAV_tab), QCoreApplication.translate("MainWindow", u"Waveform", None))
         self.MainWindow_tabWidget.setTabText(self.MainWindow_tabWidget.indexOf(self.Table_tab), QCoreApplication.translate("MainWindow", u"Table", None))
-        self.menu_File.setTitle(QCoreApplication.translate("MainWindow", u"&File", None))
+        self.menu_File.setTitle(QCoreApplication.translate("MainWindow", u"File", None))
+        self.menuHelp.setTitle(QCoreApplication.translate("MainWindow", u"Help", None))
     # retranslateUi
 
