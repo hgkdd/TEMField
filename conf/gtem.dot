@@ -1,0 +1,37 @@
+digraph {
+    sg [ini="sg_rs_smb100a.ini"]
+    amp1 [ini="amp_ametek_cba_1g_030d.ini" condition="1e6<=f<=1e9"]
+    amp2 [ini="amp_ar_25s1g4.ini" condition="800e6<=f<=4.2e9"]
+    sw [ini="sw_gtem.ini"]
+	prb [ini="prb_lumi_CI250p.ini" condition="30e6<=f<=8.2e9"]
+
+    cbl_sg_amp1 [ini="sg-amp1in.ini" condition="0<=f<=18e9"]
+    cbl_amp1_gtem [ini="amp1out-gtem.ini" condition="10e3<=f<=1e9"]
+
+    cbl_sg_amp2 [ini="sg-amp2in.ini" condition="0<=f<=18e9"]
+    cbl_amp2_gtem [ini="amp2out-gtem.ini" condition="700e6<=f<=4.2e9"]
+
+    sg -> sg1 [condition="0<=f<=1e9"]
+    sg -> sg2 [condition="1e9<f<=18e9"]
+    
+    sg1 -> a1i       [dev=cbl_sg_amp1 what="S21"]
+    sg2 -> a2i       [dev=cbl_sg_amp2 what="S21"]
+    a1i -> amp_in   [condition="0<=f<=1e9"]
+    a2i -> amp_in   [condition="1e9<f<=18e9"]
+
+    amp_in -> a1ii   [condition="0<=f<=1e9"]
+    amp_in -> a2ii   [condition="1e9<f<=18e9"]
+
+    a1ii -> a1oo   [dev=amp1 what="S21"]
+    a2ii -> a2oo   [dev=amp2 what="S21"]
+
+    a1oo -> amp_out   [condition="0<=f<=1e9"]
+    a2oo -> amp_out   [condition="1e9<f<=18e9"]
+    
+    amp_out -> gtem1    [dev=cbl_amp1_gtem what="S21"]
+    amp_out -> gtem2    [dev=cbl_amp2_gtem what="S21"]
+    gtem1 -> gtem   [condition="0<=f<=1e9"]
+    gtem2 -> gtem   [condition="1e9<f<=18e9"]
+	
+	gtem -> prb [condition="0<=f"]
+}
