@@ -1,6 +1,8 @@
 # This Python file uses the following encoding: utf-8
 import sys
+import os
 import time
+import io
 
 import numpy as np
 
@@ -10,6 +12,11 @@ from matplotlib.backends.backend_qtagg import FigureCanvas
 from matplotlib.figure import Figure
 
 from PySide6.QtWidgets import QApplication, QMainWindow
+
+from scuq import quantities, si
+
+import mpy.device.prb_lumiloop_lsporobe as lumiprb
+from mpy.tools import util, mgraph
 
 # Important:
 # You need to run the following command to generate the ui_form.py file
@@ -21,8 +28,67 @@ class MainWindow(QMainWindow):
         super().__init__(parent)
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
+        names = {
+            'sg': 'sg',
+            'a1': 'amp1',
+            'a2': 'amp2',
+            'fp': 'prb',
+            'tem': 'gtem'
+        }
+        dotfile = 'gtem.dot'
+        mg = mgraph.MGraph(dotfile, themap=names.copy(), SearchPaths=['.', os.path.abspath('conf')])
+        ddict = mg.CreateDevices()
+        err = mg.Init_Devices()
+        lv = quantities.Quantity(si.WATT, 1e-4)   # -10 dbm
+        e_target = quantities.Quantity(si.VOLT / si.METER, 2)
+        mg.CmdDevices(True, 'SetLevel', lv)
+        stat = mg.Zero_Devices()
+        stat = mg.RFOn_Devices()
+
+        for f in [30e6, 500e6, 1000e6, 2000e6]:
+            minf, maxf = mg.SetFreq_Devices(f)
+            mg.EvaluateConditions()
+            leveler = mgraph.Leveler(mg, 'sg', 'gtem', 'gtem', 'prb')
+            leveler.adjust_level(e_target)
+            print(f, minf, maxf)
+            time.sleep(3)
+        stat = mg.RFOff_Devices()
+        stat = mg.Quit_Devices()
+        sys.exit()
+
+
         efield_canvas = FigureCanvas(Figure(figsize=(5, 4)))
         self.ui.EFieldWAV_scrollArea.setWidget(efield_canvas)
+
+        # init field probe
+        ini = format_block("""
+                                [DESCRIPTION]
+                                description: 'LSProbe 1.2'
+                                type:        'FIELDPROBE'
+                                vendor:      'LUMILOOP'
+                                serialnr:
+                                deviceid:
+                                driver:
+
+                                [Init_Value]
+                                fstart: 10e3
+                                fstop: 8.2e9
+                                fstep: 0
+                                visa: TCPIP0::192.168.88.3::10000::SOCKET
+                                mode: 0
+                                virtual: 0
+
+                                [Channel_1]
+                                name: EField
+                                unit: Voverm
+                                """)
+        ini = io.StringIO(ini)
+
+        prb = lumiprb.FIELDPROBE()
+        prb.Init(ini=ini, channel=1)
+        err, des = prb.GetDescription()
+
+
         self._efield_ax = efield_canvas.figure.subplots()
         t = np.linspace(0, 10, 101)
         # Set up a Line2D.
@@ -38,7 +104,7 @@ class MainWindow(QMainWindow):
         self._line.figure.canvas.draw()
 
 if __name__ == "__main__":
-    app = QApplication(sys.argv)
+    #app = QApplication(sys.argv)
     widget = MainWindow()
-    widget.show()
-    sys.exit(app.exec())
+    #widget.show()
+    #sys.exit(app.exec())
