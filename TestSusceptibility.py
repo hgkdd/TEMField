@@ -1,0 +1,93 @@
+import os
+import time
+
+from scuq import si,quantities
+from mpy.tools import util, mgraph
+from mpy.env.univers.AmplifierTest import dBm2W
+from mpy.env.Measure import Measure
+
+class TestSusceptibiliy(Measure):
+    def __init__(self, parent=None):
+        Measure.__init__(self, parent)
+
+    def setup_measurement(self):
+        self.names = {
+            'sg': 'sg',
+            'a1': 'amp1',
+            'a2': 'amp2',
+            'fp': 'prb',
+            'tem': 'gtem'
+        }
+        def datafunc(data):
+            return data[0]  # x-coordinate
+
+        self.datafunc = datafunc
+        self.pin = [quantities.Quantity(si.WATT, dBm2W(_dBm)) for _dBm in (-40, -30, -25)]
+        self.dwell_time = 1
+        self.e_target = quantities.Quantity(si.VOLT / si.METER, 3.5)
+        self.dotfile = 'gtem.dot'
+        self.mg = mgraph.MGraph(self.dotfile, themap=self.names.copy(), SearchPaths=['.', os.path.abspath('conf')])
+        self.leveler_par = {'mg': self.mg,
+                        'actor': self.mg.name.sg,
+                        'output': self.mg.name.tem,
+                        'lpoint': self.mg.name.tem,
+                        'observer': self.mg.name.fp,
+                        'pin': self.pin,
+                        'datafunc': self.datafunc,
+                        'min_actor': None}
+
+        self.ddict = self.mg.CreateDevices()
+
+    def init_measurement(self):
+        err = self.mg.Init_Devices()
+        stat = self.mg.Zero_Devices()
+        stat = self.mg.RFOn_Devices()
+
+
+    def do_measurement(self, f):
+        minf, maxf = self.mg.SetFreq_Devices(f)
+        self.mg.EvaluateConditions()
+        leveler = mgraph.Leveler(**self.leveler_par)
+        leveler.adjust_level(self.e_target)
+        res = self.mg.Read([self.mg.name.fp])
+        print(f, res[self.mg.name.fp][0])
+        self.mg.CmdDevices(True, 'AMOn')
+        # wait delay seconds
+        #self.messenger(util.tstamp() + " Going to sleep for %d seconds ..." % (self.dwell_time), [])
+        self.wait(self.dwell_time, locals(), self.__HandleUserInterrupt)
+        #self.messenger(util.tstamp() + " ... back.", [])
+        # time.sleep(self.dwell_time)
+        self.mg.CmdDevices(True, 'AMOff')
+
+    def finalize_measurement(self):
+        stat = self.mg.RFOff_Devices()
+        stat = self.mg.Quit_Devices()
+
+    def __HandleUserInterrupt(self, dct, ignorelist='', handler=None):
+        if callable(handler):
+            return handler(dct, ignorelist=ignorelist)
+        else:
+            return self.stdUserInterruptHandler(dct, ignorelist=ignorelist)
+
+    def stdUserInterruptHandler(self, dct, ignorelist=''):
+        key = self.UserInterruptTester()
+        if key and not chr(key) in ignorelist:
+            # empty key buffer
+            _k = self.UserInterruptTester()
+            while _k is not None:
+                _k = self.UserInterruptTester()
+
+            mg = self.mg
+            names = self.names
+            dwell_time = self.dwell_time
+            self.messenger(util.tstamp() + " RF Off...", [])
+            stat = mg.RFOff_Devices()  # switch off after measure
+            msg1 = """The measurement has been interrupted by the user.\nHow do you want to proceed?\n\nContinue: go ahead...\nSuspend: Quit devices, go ahead later after reinit...\nInteractive: Go to interactive mode...\nQuit: Quit measurement..."""
+            but1 = ['Continue', 'Quit']
+            answer = self.messenger(msg1, but1)
+            # print answer
+            if answer == but1.index('Quit'):
+                self.messenger(util.tstamp() + " measurment terminated by user.", [])
+                raise UserWarning  # to reach finally statement
+            self.messenger(util.tstamp() + " RF On...", [])
+            stat = mg.RFOn_Devices()  # switch on just before measure

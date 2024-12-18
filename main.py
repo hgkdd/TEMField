@@ -1,59 +1,40 @@
 # This Python file uses the following encoding: utf-8
 import sys
-import os
 import time
 import io
-
 import numpy as np
 
 from PySide6.QtCore import QDate
 from matplotlib.backends.backend_qtagg import FigureCanvas
-#from matplotlib.backends.qt_compat import QtWidgets
 from matplotlib.figure import Figure
 
 from PySide6.QtWidgets import QApplication, QMainWindow
 
-from scuq import quantities, si
-
 import mpy.device.prb_lumiloop_lsporobe as lumiprb
-from mpy.tools import util, mgraph
+from mpy.tools.spacing import logspace
+from TestSusceptibility import TestSusceptibiliy
 
 # Important:
 # You need to run the following command to generate the ui_form.py file
 #     pyside6-uic mainwindow.ui -o mainwindow.py
 from mainwindow import Ui_MainWindow
 
+
 class MainWindow(QMainWindow):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
-        names = {
-            'sg': 'sg',
-            'a1': 'amp1',
-            'a2': 'amp2',
-            'fp': 'prb',
-            'tem': 'gtem'
-        }
-        dotfile = 'gtem.dot'
-        mg = mgraph.MGraph(dotfile, themap=names.copy(), SearchPaths=['.', os.path.abspath('conf')])
-        ddict = mg.CreateDevices()
-        err = mg.Init_Devices()
-        lv = quantities.Quantity(si.WATT, 1e-4)   # -10 dbm
-        e_target = quantities.Quantity(si.VOLT / si.METER, 2)
-        mg.CmdDevices(True, 'SetLevel', lv)
-        stat = mg.Zero_Devices()
-        stat = mg.RFOn_Devices()
+        self.meas = TestSusceptibiliy()
+        self.meas.setup_measurement()
+        try:
+            self.meas.init_measurement()
+            freqs = logspace(30e6, 4.2e9, factor=1.10, endpoint=True)
+            for f in freqs:  # [30e6, 500e6, 1000e6, 2000e6]:
+                self.meas.do_measurement(f)
+        finally:
+            self.meas.finalize_measurement()
 
-        for f in [30e6, 500e6, 1000e6, 2000e6]:
-            minf, maxf = mg.SetFreq_Devices(f)
-            mg.EvaluateConditions()
-            leveler = mgraph.Leveler(mg, 'sg', 'gtem', 'gtem', 'prb')
-            leveler.adjust_level(e_target)
-            print(f, minf, maxf)
-            time.sleep(3)
-        stat = mg.RFOff_Devices()
-        stat = mg.Quit_Devices()
         sys.exit()
 
 
@@ -102,6 +83,7 @@ class MainWindow(QMainWindow):
         # Shift the sinusoid as a function of time.
         self._line.set_data(t, np.sin(t + time.time()))
         self._line.figure.canvas.draw()
+
 
 if __name__ == "__main__":
     #app = QApplication(sys.argv)
