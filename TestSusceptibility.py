@@ -10,24 +10,57 @@ class TestSusceptibiliy(Measure):
     def __init__(self, parent=None):
         Measure.__init__(self, parent)
 
-    def setup_measurement(self):
-        self.names = {
-            'sg': 'sg',
-            'a1': 'amp1',
-            'a2': 'amp2',
-            'fp': 'prb',
-            'tem': 'gtem'
-        }
-        def datafunc(data):
-            return data[0]  # x-coordinate
+    def Init(self, names=None,
+             datafunc = None,
+             pin=None,
+             dwell_time=None,
+             e_target=None,
+             dotfile=None,
+             SearchPath=None,
+             leveler_par=None):
+        if names is None:
+            self.names = {
+                'sg': 'sg',
+                'a1': 'amp1',
+                'a2': 'amp2',
+                'fp': 'prb',
+                'tem': 'gtem'
+            }
+        else:
+            self.names = names
 
-        self.datafunc = datafunc
-        self.pin = [quantities.Quantity(si.WATT, dBm2W(_dBm)) for _dBm in (-40, -30, -25)]
-        self.dwell_time = 1
-        self.e_target = quantities.Quantity(si.VOLT / si.METER, 3.5)
-        self.dotfile = 'gtem.dot'
-        self.mg = mgraph.MGraph(self.dotfile, themap=self.names.copy(), SearchPaths=['.', os.path.abspath('conf')])
-        self.leveler_par = {'mg': self.mg,
+        def __datafunc(data):
+            return data[0]  # x-coordinate
+        if datafunc is None:
+            self.datafunc = __datafunc
+        else:
+            self.datafunc = datafunc
+        if pin is None:
+            self.pin = [quantities.Quantity(si.WATT, dBm2W(_dBm)) for _dBm in (-40, -30, -25)]
+        else:
+            self.pin = [quantities.Quantity(si.WATT, dBm2W(_dBm)) for _dBm in pin]
+
+        if dwell_time is None:
+            self.dwell_time = 1
+        else:
+            self.dwell_time = dwell_time
+
+        if e_target is None:
+            self.e_target = quantities.Quantity(si.VOLT / si.METER, 1)
+        else:
+            self.e_target = quantities.Quantity(si.VOLT / si.METER, e_target)
+
+        if dotfile is None:
+            self.dotfile = 'gtem.dot'
+        else:
+            self.dotfile = dotfile
+        if SearchPath is None:
+            self.SearchPath = ['.', os.path.abspath('conf')]
+        else:
+            self.SearchPath = SearchPath
+        self.mg = mgraph.MGraph(self.dotfile, themap=self.names.copy(), SearchPaths=self.SearchPath)
+        if leveler_par is None:
+            self.leveler_par = {'mg': self.mg,
                         'actor': self.mg.name.sg,
                         'output': self.mg.name.tem,
                         'lpoint': self.mg.name.tem,
@@ -35,6 +68,8 @@ class TestSusceptibiliy(Measure):
                         'pin': self.pin,
                         'datafunc': self.datafunc,
                         'min_actor': None}
+        else:
+            self.leveler_par = leveler_par
 
         self.ddict = self.mg.CreateDevices()
 
@@ -59,7 +94,7 @@ class TestSusceptibiliy(Measure):
         # time.sleep(self.dwell_time)
         self.mg.CmdDevices(True, 'AMOff')
 
-    def finalize_measurement(self):
+    def quit_measurement(self):
         stat = self.mg.RFOff_Devices()
         stat = self.mg.Quit_Devices()
 

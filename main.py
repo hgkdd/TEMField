@@ -26,14 +26,14 @@ class MainWindow(QMainWindow):
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
         self.meas = TestSusceptibiliy()
-        self.meas.setup_measurement()
+        self.meas.Init(dwell_time=1, e_target=1 )
         try:
             self.meas.init_measurement()
             freqs = logspace(30e6, 4.2e9, factor=1.10, endpoint=True)
             for f in freqs:  # [30e6, 500e6, 1000e6, 2000e6]:
                 self.meas.do_measurement(f)
         finally:
-            self.meas.finalize_measurement()
+            self.meas.quit_measurement()
 
         sys.exit()
 
