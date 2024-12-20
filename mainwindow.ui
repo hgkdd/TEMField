@@ -69,7 +69,7 @@
                <x>0</x>
                <y>0</y>
                <width>578</width>
-               <height>442</height>
+               <height>453</height>
               </rect>
              </property>
             </widget>
@@ -81,6 +81,107 @@
        <item>
         <layout class="QVBoxLayout" name="verticalLayout_3">
          <item>
+          <widget class="QGroupBox" name="E_groupBox">
+           <property name="title">
+            <string>E-Field</string>
+           </property>
+           <layout class="QVBoxLayout" name="verticalLayout_4">
+            <item>
+             <layout class="QHBoxLayout" name="horizontalLayout_7">
+              <item>
+               <widget class="QLabel" name="E_Target_label">
+                <property name="text">
+                 <string>E Field Strength:</string>
+                </property>
+                <property name="buddy">
+                 <cstring>E_Target_lineEdit</cstring>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLineEdit" name="E_Target_lineEdit">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>16777215</width>
+                  <height>16777215</height>
+                 </size>
+                </property>
+                <property name="text">
+                 <string>1,0</string>
+                </property>
+                <property name="placeholderText">
+                 <string/>
+                </property>
+                <property name="clearButtonEnabled">
+                 <bool>false</bool>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLabel" name="E_Target_unit">
+                <property name="text">
+                 <string>V/m</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <layout class="QHBoxLayout" name="horizontalLayout_8">
+              <item>
+               <widget class="QLabel" name="E_AM_label">
+                <property name="text">
+                 <string>Amplitude Mod:</string>
+                </property>
+                <property name="buddy">
+                 <cstring>E_AM_lineEdit</cstring>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLineEdit" name="E_AM_lineEdit">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>16777215</width>
+                  <height>16777215</height>
+                 </size>
+                </property>
+                <property name="text">
+                 <string>80</string>
+                </property>
+                <property name="placeholderText">
+                 <string/>
+                </property>
+                <property name="clearButtonEnabled">
+                 <bool>false</bool>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLabel" name="E_AM_unit">
+                <property name="text">
+                 <string>%</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+           </layout>
+          </widget>
+         </item>
+         <item>
           <widget class="QGroupBox" name="Sweep_groupBox">
            <property name="title">
             <string>Sweep Control</string>
@@ -91,7 +192,7 @@
               <item>
                <widget class="QLabel" name="f_start_label">
                 <property name="text">
-                 <string>Start:</string>
+                 <string>Start Freq.:</string>
                 </property>
                 <property name="buddy">
                  <cstring>f_start_lineEdit</cstring>
@@ -100,6 +201,9 @@
               </item>
               <item>
                <widget class="QLineEdit" name="f_start_lineEdit">
+                <property name="text">
+                 <string>30</string>
+                </property>
                 <property name="placeholderText">
                  <string/>
                 </property>
@@ -122,7 +226,7 @@
               <item>
                <widget class="QLabel" name="f_stop_label">
                 <property name="text">
-                 <string>Stop:</string>
+                 <string>Stop Freq.:</string>
                 </property>
                 <property name="buddy">
                  <cstring>f_stop_lineEdit</cstring>
@@ -130,7 +234,11 @@
                </widget>
               </item>
               <item>
-               <widget class="QLineEdit" name="f_stop_lineEdit"/>
+               <widget class="QLineEdit" name="f_stop_lineEdit">
+                <property name="text">
+                 <string>1000</string>
+                </property>
+               </widget>
               </item>
               <item>
                <widget class="QLabel" name="f_stop_unit">
@@ -146,7 +254,7 @@
               <item>
                <widget class="QLabel" name="f_step_label">
                 <property name="text">
-                 <string>Step:</string>
+                 <string>Freq. Step:</string>
                 </property>
                 <property name="buddy">
                  <cstring>f_step_lineEdit</cstring>
@@ -154,7 +262,11 @@
                </widget>
               </item>
               <item>
-               <widget class="QLineEdit" name="f_step_lineEdit"/>
+               <widget class="QLineEdit" name="f_step_lineEdit">
+                <property name="text">
+                 <string>1</string>
+                </property>
+               </widget>
               </item>
               <item>
                <widget class="QLabel" name="f_step_unit">
@@ -180,7 +292,7 @@
               <item>
                <widget class="QLabel" name="f_step_time_label">
                 <property name="text">
-                 <string>Time:</string>
+                 <string>Dwell Time:</string>
                 </property>
                 <property name="buddy">
                  <cstring>f_step_time_lineEdit</cstring>
@@ -188,7 +300,11 @@
                </widget>
               </item>
               <item>
-               <widget class="QLineEdit" name="f_step_time_lineEdit"/>
+               <widget class="QLineEdit" name="f_step_time_lineEdit">
+                <property name="text">
+                 <string>1</string>
+                </property>
+               </widget>
               </item>
               <item>
                <widget class="QLabel" name="f_step_time_unit">
@@ -200,109 +316,14 @@
              </layout>
             </item>
             <item>
-             <widget class="QPushButton" name="Sweep_Pause_pushButton">
+             <widget class="QPushButton" name="Sweep_StartPause_pushButton">
               <property name="text">
-               <string>Pause Sweep</string>
+               <string>Start Sweep</string>
               </property>
               <property name="checkable">
                <bool>true</bool>
               </property>
              </widget>
-            </item>
-           </layout>
-          </widget>
-         </item>
-         <item>
-          <widget class="QGroupBox" name="E_groupBox">
-           <property name="title">
-            <string>E-Field</string>
-           </property>
-           <layout class="QVBoxLayout" name="verticalLayout_4">
-            <item>
-             <layout class="QHBoxLayout" name="horizontalLayout_7">
-              <item>
-               <widget class="QLabel" name="E_Target_label">
-                <property name="text">
-                 <string>E:</string>
-                </property>
-                <property name="buddy">
-                 <cstring>E_Target_lineEdit</cstring>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QLineEdit" name="E_Target_lineEdit">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="maximumSize">
-                 <size>
-                  <width>16777215</width>
-                  <height>16777215</height>
-                 </size>
-                </property>
-                <property name="placeholderText">
-                 <string/>
-                </property>
-                <property name="clearButtonEnabled">
-                 <bool>false</bool>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QLabel" name="E_Target_unit">
-                <property name="text">
-                 <string>V/m</string>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </item>
-            <item>
-             <layout class="QHBoxLayout" name="horizontalLayout_8">
-              <item>
-               <widget class="QLabel" name="E_AM_label">
-                <property name="text">
-                 <string>AM:</string>
-                </property>
-                <property name="buddy">
-                 <cstring>E_AM_lineEdit</cstring>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QLineEdit" name="E_AM_lineEdit">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="maximumSize">
-                 <size>
-                  <width>16777215</width>
-                  <height>16777215</height>
-                 </size>
-                </property>
-                <property name="placeholderText">
-                 <string/>
-                </property>
-                <property name="clearButtonEnabled">
-                 <bool>false</bool>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QLabel" name="E_AM_unit">
-                <property name="text">
-                 <string>%</string>
-                </property>
-               </widget>
-              </item>
-             </layout>
             </item>
            </layout>
           </widget>
@@ -361,7 +382,7 @@
      <x>0</x>
      <y>0</y>
      <width>979</width>
-     <height>37</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu_File">
@@ -413,7 +434,7 @@
   <tabstop>E_AM_lineEdit</tabstop>
   <tabstop>RF_pushButton</tabstop>
   <tabstop>MOD_pushButton</tabstop>
-  <tabstop>Sweep_Pause_pushButton</tabstop>
+  <tabstop>Sweep_StartPause_pushButton</tabstop>
   <tabstop>EFieldWAV_scrollArea</tabstop>
   <tabstop>Quit_pushButton</tabstop>
  </tabstops>
