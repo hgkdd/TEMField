@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1008</width>
-    <height>600</height>
+    <width>902</width>
+    <height>709</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -16,52 +16,70 @@
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout_2">
     <item row="0" column="0">
-     <layout class="QGridLayout" name="gridLayout">
+     <layout class="QGridLayout" name="centralwidget_gridLayout">
       <item row="0" column="0">
-       <widget class="QTabWidget" name="Main_tabWidget">
+       <widget class="QTabWidget" name="centralwidget_tabWidget">
         <property name="currentIndex">
          <number>0</number>
         </property>
-        <widget class="QWidget" name="tab">
+        <widget class="QWidget" name="settings_tab">
          <attribute name="title">
           <string>Settings</string>
          </attribute>
          <layout class="QGridLayout" name="gridLayout_4">
           <item row="0" column="0">
-           <layout class="QHBoxLayout" name="horizontalLayout_2">
+           <layout class="QHBoxLayout" name="settings_tab_horizontalLayout">
             <item>
-             <widget class="QGroupBox" name="groupBox_2">
+             <widget class="QGroupBox" name="field_strengh_groupBox">
               <property name="title">
                <string>Field Strength</string>
               </property>
               <layout class="QGridLayout" name="gridLayout_3">
                <item row="0" column="0">
-                <layout class="QFormLayout" name="formLayout_2">
+                <layout class="QFormLayout" name="field_strength_formLayout">
                  <item row="0" column="0">
-                  <widget class="QLabel" name="label_5">
+                  <widget class="QLabel" name="cw_label">
                    <property name="text">
-                    <string>CW / V/m</string>
+                    <string>CW Field</string>
                    </property>
-                  </widget>
-                 </item>
-                 <item row="0" column="1">
-                  <widget class="QLineEdit" name="lineEdit_5">
-                   <property name="text">
-                    <string>1</string>
+                   <property name="buddy">
+                    <cstring>cw_doubleSpinBox</cstring>
                    </property>
                   </widget>
                  </item>
                  <item row="1" column="0">
-                  <widget class="QLabel" name="label_6">
+                  <widget class="QLabel" name="am_label">
                    <property name="text">
-                    <string>AM / %</string>
+                    <string>AM</string>
+                   </property>
+                   <property name="buddy">
+                    <cstring>am_spinBox</cstring>
                    </property>
                   </widget>
                  </item>
                  <item row="1" column="1">
-                  <widget class="QLineEdit" name="lineEdit_6">
-                   <property name="text">
-                    <string>80</string>
+                  <widget class="QSpinBox" name="am_spinBox">
+                   <property name="wrapping">
+                    <bool>true</bool>
+                   </property>
+                   <property name="suffix">
+                    <string>%</string>
+                   </property>
+                   <property name="maximum">
+                    <number>100</number>
+                   </property>
+                   <property name="value">
+                    <number>80</number>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="0" column="1">
+                  <widget class="QDoubleSpinBox" name="cw_doubleSpinBox">
+                   <property name="suffix">
+                    <string> V/m</string>
+                   </property>
+                   <property name="value">
+                    <double>1.000000000000000</double>
                    </property>
                   </widget>
                  </item>
@@ -71,57 +89,45 @@
              </widget>
             </item>
             <item>
-             <widget class="QGroupBox" name="groupBox">
+             <widget class="QGroupBox" name="frequency_groupBox">
               <property name="title">
                <string>Frequency</string>
               </property>
               <layout class="QGridLayout" name="gridLayout_6">
                <item row="0" column="0">
-                <layout class="QFormLayout" name="formLayout">
+                <layout class="QFormLayout" name="frequency_ormLayout">
                  <item row="0" column="0">
-                  <widget class="QLabel" name="label">
+                  <widget class="QLabel" name="freq_start_label">
                    <property name="text">
-                    <string>Start / MHz</string>
+                    <string>Start</string>
                    </property>
-                  </widget>
-                 </item>
-                 <item row="0" column="1">
-                  <widget class="QLineEdit" name="lineEdit">
-                   <property name="text">
-                    <string>30</string>
+                   <property name="buddy">
+                    <cstring>freq_start_doubleSpinBox</cstring>
                    </property>
                   </widget>
                  </item>
                  <item row="1" column="0">
-                  <widget class="QLabel" name="label_2">
+                  <widget class="QLabel" name="freq_stop_label">
                    <property name="text">
-                    <string>Stop / MHz</string>
+                    <string>Stop</string>
                    </property>
-                  </widget>
-                 </item>
-                 <item row="1" column="1">
-                  <widget class="QLineEdit" name="lineEdit_2">
-                   <property name="text">
-                    <string>1000</string>
+                   <property name="buddy">
+                    <cstring>freq_stop_doubleSpinBox</cstring>
                    </property>
                   </widget>
                  </item>
                  <item row="2" column="0">
-                  <widget class="QLabel" name="label_3">
+                  <widget class="QLabel" name="freq_step_label">
                    <property name="text">
-                    <string>Step / %</string>
+                    <string>Step</string>
                    </property>
-                  </widget>
-                 </item>
-                 <item row="2" column="1">
-                  <widget class="QLineEdit" name="lineEdit_3">
-                   <property name="text">
-                    <string>1</string>
+                   <property name="buddy">
+                    <cstring>freq_step_doubleSpinBox</cstring>
                    </property>
                   </widget>
                  </item>
                  <item row="3" column="1">
-                  <widget class="QCheckBox" name="checkBox">
+                  <widget class="QCheckBox" name="log_sweep_checkBox">
                    <property name="text">
                     <string>Log Sweep</string>
                    </property>
@@ -131,7 +137,7 @@
                   </widget>
                  </item>
                  <item row="5" column="1">
-                  <widget class="QPlainTextEdit" name="plainTextEdit">
+                  <widget class="QPlainTextEdit" name="freqs_plainTextEdit">
                    <property name="acceptDrops">
                     <bool>false</bool>
                    </property>
@@ -141,16 +147,61 @@
                   </widget>
                  </item>
                  <item row="4" column="0">
-                  <widget class="QLabel" name="label_4">
+                  <widget class="QLabel" name="nr_freqs_label">
                    <property name="text">
-                    <string># Freq.</string>
+                    <string># Freqs.</string>
                    </property>
                   </widget>
                  </item>
                  <item row="4" column="1">
-                  <widget class="QLineEdit" name="lineEdit_4">
+                  <widget class="QLineEdit" name="nr_freqs_lineEdit">
                    <property name="readOnly">
                     <bool>true</bool>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="0" column="1">
+                  <widget class="QDoubleSpinBox" name="freq_start_doubleSpinBox">
+                   <property name="suffix">
+                    <string> MHz</string>
+                   </property>
+                   <property name="decimals">
+                    <number>4</number>
+                   </property>
+                   <property name="maximum">
+                    <double>99999.999899999995250</double>
+                   </property>
+                   <property name="singleStep">
+                    <double>1.000000000000000</double>
+                   </property>
+                   <property name="value">
+                    <double>30.000000000000000</double>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="1" column="1">
+                  <widget class="QDoubleSpinBox" name="freq_stop_doubleSpinBox">
+                   <property name="suffix">
+                    <string> MHz</string>
+                   </property>
+                   <property name="decimals">
+                    <number>4</number>
+                   </property>
+                   <property name="maximum">
+                    <double>99999.990000000005239</double>
+                   </property>
+                   <property name="value">
+                    <double>1000.000000000000000</double>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="2" column="1">
+                  <widget class="QDoubleSpinBox" name="freq_step_doubleSpinBox">
+                   <property name="suffix">
+                    <string>%</string>
+                   </property>
+                   <property name="value">
+                    <double>1.000000000000000</double>
                    </property>
                   </widget>
                  </item>
@@ -160,38 +211,196 @@
              </widget>
             </item>
             <item>
-             <widget class="QGroupBox" name="groupBox_3">
+             <widget class="QGroupBox" name="settings_groupBox">
               <property name="title">
                <string>Settings</string>
               </property>
               <layout class="QGridLayout" name="gridLayout_5">
                <item row="0" column="0">
-                <layout class="QFormLayout" name="formLayout_3">
-                 <item row="0" column="1">
-                  <widget class="QLineEdit" name="lineEdit_7">
-                   <property name="text">
-                    <string>1</string>
-                   </property>
-                  </widget>
-                 </item>
+                <layout class="QFormLayout" name="settings_formLayout">
                  <item row="0" column="0">
-                  <widget class="QLabel" name="label_7">
+                  <widget class="QLabel" name="dwell_time_label">
                    <property name="text">
-                    <string>Dwell Time / s</string>
+                    <string>Dwell Time</string>
+                   </property>
+                   <property name="buddy">
+                    <cstring>dwell_time_doubleSpinBox</cstring>
                    </property>
                   </widget>
                  </item>
                  <item row="1" column="1">
-                  <widget class="QLineEdit" name="lineEdit_8">
+                  <widget class="QLineEdit" name="est_time_lineEdit">
                    <property name="readOnly">
                     <bool>true</bool>
                    </property>
                   </widget>
                  </item>
                  <item row="1" column="0">
-                  <widget class="QLabel" name="label_8">
+                  <widget class="QLabel" name="est_time_label">
                    <property name="text">
-                    <string>Test Time / s</string>
+                    <string>Est. Test Time</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="0" column="1">
+                  <widget class="QDoubleSpinBox" name="dwell_time_doubleSpinBox">
+                   <property name="suffix">
+                    <string> s</string>
+                   </property>
+                   <property name="decimals">
+                    <number>3</number>
+                   </property>
+                   <property name="maximum">
+                    <double>999.999000000000024</double>
+                   </property>
+                   <property name="value">
+                    <double>1.000000000000000</double>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="2" column="0">
+                  <widget class="QLabel" name="graph_file_label">
+                   <property name="text">
+                    <string>Graph File</string>
+                   </property>
+                   <property name="buddy">
+                    <cstring>graph_file_lineEdit</cstring>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="3" column="0">
+                  <widget class="QLabel" name="search_path_label">
+                   <property name="text">
+                    <string>Search Path</string>
+                   </property>
+                   <property name="buddy">
+                    <cstring>search_path_lineEdit</cstring>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="2" column="1">
+                  <widget class="QLineEdit" name="graph_file_lineEdit">
+                   <property name="text">
+                    <string>gtem.dot</string>
+                   </property>
+                   <property name="readOnly">
+                    <bool>true</bool>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="3" column="1">
+                  <widget class="QLineEdit" name="search_path_lineEdit">
+                   <property name="text">
+                    <string>[‘.‘, ‘conf‘]</string>
+                   </property>
+                   <property name="readOnly">
+                    <bool>true</bool>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="4" column="1">
+                  <widget class="QTableWidget" name="node_names_tableWidget">
+                   <property name="alternatingRowColors">
+                    <bool>true</bool>
+                   </property>
+                   <property name="verticalScrollMode">
+                    <enum>QAbstractItemView::ScrollMode::ScrollPerItem</enum>
+                   </property>
+                   <property name="rowCount">
+                    <number>5</number>
+                   </property>
+                   <property name="columnCount">
+                    <number>2</number>
+                   </property>
+                   <attribute name="verticalHeaderVisible">
+                    <bool>false</bool>
+                   </attribute>
+                   <row/>
+                   <row/>
+                   <row/>
+                   <row/>
+                   <row/>
+                   <column>
+                    <property name="text">
+                     <string>Function</string>
+                    </property>
+                   </column>
+                   <column>
+                    <property name="text">
+                     <string>Node in Graph</string>
+                    </property>
+                   </column>
+                   <item row="0" column="0">
+                    <property name="text">
+                     <string>Generator</string>
+                    </property>
+                    <property name="flags">
+                     <set>ItemIsDragEnabled|ItemIsDropEnabled|ItemIsEnabled</set>
+                    </property>
+                   </item>
+                   <item row="0" column="1">
+                    <property name="text">
+                     <string>sg</string>
+                    </property>
+                   </item>
+                   <item row="1" column="0">
+                    <property name="text">
+                     <string>Amp. Input</string>
+                    </property>
+                    <property name="flags">
+                     <set>ItemIsDragEnabled|ItemIsDropEnabled|ItemIsEnabled</set>
+                    </property>
+                   </item>
+                   <item row="1" column="1">
+                    <property name="text">
+                     <string>amp1</string>
+                    </property>
+                   </item>
+                   <item row="2" column="0">
+                    <property name="text">
+                     <string>Amp. Output</string>
+                    </property>
+                    <property name="flags">
+                     <set>ItemIsDragEnabled|ItemIsDropEnabled|ItemIsEnabled</set>
+                    </property>
+                   </item>
+                   <item row="2" column="1">
+                    <property name="text">
+                     <string>amp2</string>
+                    </property>
+                   </item>
+                   <item row="3" column="0">
+                    <property name="text">
+                     <string>Cell</string>
+                    </property>
+                    <property name="flags">
+                     <set>ItemIsDragEnabled|ItemIsDropEnabled|ItemIsEnabled</set>
+                    </property>
+                   </item>
+                   <item row="3" column="1">
+                    <property name="text">
+                     <string>gtem</string>
+                    </property>
+                   </item>
+                   <item row="4" column="0">
+                    <property name="text">
+                     <string>Field Probe</string>
+                    </property>
+                    <property name="flags">
+                     <set>ItemIsDragEnabled|ItemIsDropEnabled|ItemIsEnabled</set>
+                    </property>
+                   </item>
+                   <item row="4" column="1">
+                    <property name="text">
+                     <string>prb</string>
+                    </property>
+                   </item>
+                  </widget>
+                 </item>
+                 <item row="4" column="0">
+                  <widget class="QLabel" name="node_names_label">
+                   <property name="text">
+                    <string>Node Names</string>
                    </property>
                   </widget>
                  </item>
@@ -204,34 +413,67 @@
           </item>
          </layout>
         </widget>
-        <widget class="QWidget" name="tab_2">
+        <widget class="QWidget" name="waveform_tab">
          <attribute name="title">
           <string>Waveform</string>
          </attribute>
+         <layout class="QGridLayout" name="gridLayout_7">
+          <item row="0" column="0">
+           <widget class="QScrollArea" name="waveform_scrollArea">
+            <property name="widgetResizable">
+             <bool>true</bool>
+            </property>
+            <widget class="QWidget" name="waveform_scrollAreaWidgetContents">
+             <property name="geometry">
+              <rect>
+               <x>0</x>
+               <y>0</y>
+               <width>828</width>
+               <height>348</height>
+              </rect>
+             </property>
+            </widget>
+           </widget>
+          </item>
+         </layout>
         </widget>
-        <widget class="QWidget" name="tab_4">
+        <widget class="QWidget" name="table_tab">
          <attribute name="title">
           <string>Table</string>
          </attribute>
+         <layout class="QGridLayout" name="gridLayout_8">
+          <item row="0" column="0">
+           <widget class="QTableWidget" name="table_tableWidget"/>
+          </item>
+         </layout>
         </widget>
-        <widget class="QWidget" name="tab_3">
+        <widget class="QWidget" name="log_tab">
          <attribute name="title">
           <string>Log</string>
          </attribute>
+         <layout class="QGridLayout" name="gridLayout_9">
+          <item row="0" column="0">
+           <widget class="QPlainTextEdit" name="logtab_log_plainTextEdit">
+            <property name="readOnly">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+         </layout>
         </widget>
        </widget>
       </item>
       <item row="2" column="0">
-       <layout class="QHBoxLayout" name="horizontalLayout">
+       <layout class="QHBoxLayout" name="main_buttons_horizontalLayout">
         <item>
-         <widget class="QPushButton" name="pushButton_2">
+         <widget class="QPushButton" name="start_pause_pushButton">
           <property name="text">
            <string>Start Test</string>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QPushButton" name="pushButton_3">
+         <widget class="QPushButton" name="rf_pushButton">
           <property name="text">
            <string>RF</string>
           </property>
@@ -241,7 +483,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QPushButton" name="pushButton_4">
+         <widget class="QPushButton" name="modulation_pushButton">
           <property name="text">
            <string>MOD</string>
           </property>
@@ -251,7 +493,7 @@
          </widget>
         </item>
         <item>
-         <spacer name="horizontalSpacer">
+         <spacer name="main_buttons_horizontalSpacer">
           <property name="orientation">
            <enum>Qt::Orientation::Horizontal</enum>
           </property>
@@ -264,7 +506,7 @@
          </spacer>
         </item>
         <item>
-         <widget class="QPushButton" name="pushButton">
+         <widget class="QPushButton" name="quit_pushButton">
           <property name="text">
            <string>Quit</string>
           </property>
@@ -273,7 +515,7 @@
        </layout>
       </item>
       <item row="1" column="0">
-       <widget class="QPlainTextEdit" name="plainTextEdit_2">
+       <widget class="QPlainTextEdit" name="permanent_log_plainTextEdit">
         <property name="acceptDrops">
          <bool>false</bool>
         </property>
@@ -291,13 +533,184 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1008</width>
-     <height>22</height>
+     <width>902</width>
+     <height>37</height>
     </rect>
    </property>
+   <widget class="QMenu" name="menuFile">
+    <property name="title">
+     <string>File</string>
+    </property>
+    <addaction name="actionAbout"/>
+    <addaction name="actionLoad_Graph"/>
+    <addaction name="separator"/>
+    <addaction name="actionQuit"/>
+   </widget>
+   <addaction name="menuFile"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
+  <action name="actionAbout">
+   <property name="text">
+    <string>About ...</string>
+   </property>
+  </action>
+  <action name="actionQuit">
+   <property name="icon">
+    <iconset theme="QIcon::ThemeIcon::ApplicationExit"/>
+   </property>
+   <property name="text">
+    <string>Quit</string>
+   </property>
+   <property name="shortcut">
+    <string>Meta+Q</string>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::MenuRole::QuitRole</enum>
+   </property>
+  </action>
+  <action name="actionLoad_Graph">
+   <property name="text">
+    <string>Load Graph ...</string>
+   </property>
+  </action>
  </widget>
+ <tabstops>
+  <tabstop>cw_doubleSpinBox</tabstop>
+  <tabstop>am_spinBox</tabstop>
+  <tabstop>freq_start_doubleSpinBox</tabstop>
+  <tabstop>freq_stop_doubleSpinBox</tabstop>
+  <tabstop>freq_step_doubleSpinBox</tabstop>
+  <tabstop>log_sweep_checkBox</tabstop>
+  <tabstop>dwell_time_doubleSpinBox</tabstop>
+  <tabstop>graph_file_lineEdit</tabstop>
+  <tabstop>search_path_lineEdit</tabstop>
+  <tabstop>node_names_tableWidget</tabstop>
+  <tabstop>start_pause_pushButton</tabstop>
+  <tabstop>rf_pushButton</tabstop>
+  <tabstop>modulation_pushButton</tabstop>
+  <tabstop>quit_pushButton</tabstop>
+  <tabstop>est_time_lineEdit</tabstop>
+  <tabstop>logtab_log_plainTextEdit</tabstop>
+  <tabstop>freqs_plainTextEdit</tabstop>
+  <tabstop>nr_freqs_lineEdit</tabstop>
+  <tabstop>permanent_log_plainTextEdit</tabstop>
+  <tabstop>centralwidget_tabWidget</tabstop>
+  <tabstop>waveform_scrollArea</tabstop>
+  <tabstop>table_tableWidget</tabstop>
+ </tabstops>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>quit_pushButton</sender>
+   <signal>clicked()</signal>
+   <receiver>actionQuit</receiver>
+   <slot>trigger()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>966</x>
+     <y>543</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionQuit</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>close()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>503</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>log_sweep_checkBox</sender>
+   <signal>stateChanged(int)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>update()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>358</x>
+     <y>220</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>503</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>freq_start_doubleSpinBox</sender>
+   <signal>valueChanged(double)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>update()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>402</x>
+     <y>131</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>366</x>
+     <y>-11</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>freq_stop_doubleSpinBox</sender>
+   <signal>valueChanged(double)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>update()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>416</x>
+     <y>163</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>633</x>
+     <y>-13</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>freq_step_doubleSpinBox</sender>
+   <signal>valueChanged(double)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>update()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>331</x>
+     <y>191</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>297</x>
+     <y>-5</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>dwell_time_doubleSpinBox</sender>
+   <signal>valueChanged(double)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>update()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>813</x>
+     <y>132</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>733</x>
+     <y>-7</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>

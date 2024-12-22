@@ -71,7 +71,8 @@ class TestSusceptibiliy(Measure):
         else:
             self.leveler_par = leveler_par
 
-        self.ddict = self.mg.CreateDevices()
+        #self.ddict = self.mg.CreateDevices()
+        return 0
 
     def init_measurement(self):
         err = self.mg.Init_Devices()
