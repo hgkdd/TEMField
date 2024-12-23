@@ -75,9 +75,10 @@ class TestSusceptibiliy(Measure):
         return 0
 
     def init_measurement(self):
-        err = self.mg.Init_Devices()
-        stat = self.mg.Zero_Devices()
-        stat = self.mg.RFOn_Devices()
+        pass
+        #err = self.mg.Init_Devices()
+        #stat = self.mg.Zero_Devices()
+        #stat = self.mg.RFOn_Devices()
 
 
     def do_measurement(self, f):
