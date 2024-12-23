@@ -9,8 +9,9 @@ import numpy as np
 from matplotlib.backends.backend_qtagg import FigureCanvas
 from matplotlib.figure import Figure
 
-from PySide6.QtCore import Qt, QLocale, QSettings
-from PySide6.QtWidgets import QApplication, QMainWindow, QMessageBox, QFileDialog
+from PySide6.QtCore import Qt, QLocale, QSettings, QTimer, QEventLoop, QThread
+from PySide6.QtWidgets import (QApplication, QMainWindow, QMessageBox,
+                               QFileDialog, QTableWidgetItem)
 from PySide6.QtGui import QIntValidator
 
 import mpy.device.prb_lumiloop_lsporobe as lumiprb
@@ -21,6 +22,16 @@ from TestSusceptibility import TestSusceptibiliy
 # You need to run the following command to generate the ui_form.py file
 #     pyside6-uic mainwindow.ui -o mainwindow.py
 from mainwindow2 import Ui_MainWindow
+
+def qsleep (milliseconds):
+    loop = QEventLoop()
+    t = QTimer()
+    # t.timeout.connect(lambda: None)
+    # t.start(milliseconds)
+    #t.stop()
+    t.timeout.connect(loop.quit)
+    t.start(milliseconds)
+    loop.exec()
 
 
 class MainWindow(QMainWindow):
@@ -35,11 +46,6 @@ class MainWindow(QMainWindow):
         self.disable_update = False
 
         # register message box for quit action
-        self.ui.quit_MsgBox = QMessageBox()
-        self.ui.quit_MsgBox.setText("Application Exit.")
-        self.ui.quit_MsgBox.setInformativeText("Do you want to exit the application?")
-        self.ui.quit_MsgBox.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
-        self.ui.quit_MsgBox.setDefaultButton(QMessageBox.Cancel)
         self.ui.actionQuit.triggered.connect(MainWindow.close)
         # File Dialog
         self.ui.actionLoad_Graph.triggered.connect(self.load_graph)
@@ -61,13 +67,50 @@ class MainWindow(QMainWindow):
 
         self.meas = TestSusceptibiliy()
         self.ui.start_pause_pushButton.setDisabled(False)
+        self.ui.rf_pushButton.toggled.connect(self.toggle_rf)
+
+    def process_frequencies(self):
+        if self.pause_processiong:
+            QTimer.singleShot(100, self.process_frequencies)
+        else:
+            try:
+                f = self.remaining_freqs.pop(0)
+                self.ui.permanent_log_plainTextEdit.appendPlainText(f"Freq: {f} MHz")
+                # wait and process next freq
+                QTimer.singleShot(self.dwell_time * 1000, self.process_frequencies)
+            except IndexError:
+                # all freqs processed
+                self.ui.rf_pushButton.setChecked(False)
+                self.ui.start_pause_pushButton.setText("Start Test")
+
+    def toggle_rf(self):
+        if self.ui.rf_pushButton.isChecked():
+            self.ui.permanent_log_plainTextEdit.appendPlainText('RF On')
+        else:
+            self.ui.permanent_log_plainTextEdit.appendPlainText('RF Off')
 
     def start_pause_pushButton_clicked(self):
-        err = self.meas.Init(dwell_time=self.dwell_time,
-             e_target=self.cw,
-            names=self.names,
-             dotfile=self.dotfile,
-             SearchPath=self.searchpath)
+        if self.ui.start_pause_pushButton.text() == "Start Test":
+            self.pause_processiong = False
+            self.ui.start_pause_pushButton.setText("Pause Test")
+            err = self.meas.Init(dwell_time=self.dwell_time,
+                    e_target=self.cw,
+                    names=self.names,
+                    dotfile=self.dotfile,
+                    SearchPath=self.searchpath)
+            self.meas.init_measurement()
+            self.remaining_freqs = self.freqs.copy()
+            self.ui.rf_pushButton.setChecked(True)
+            self.process_frequencies()
+        elif self.ui.start_pause_pushButton.text() == "Pause Test":
+            self.ui.start_pause_pushButton.setText("Cont. Test")
+            self.ui.rf_pushButton.setChecked(False)
+            self.pause_processiong = True
+        else:
+            self.ui.start_pause_pushButton.setText("Pause Test")
+            self.ui.rf_pushButton.setChecked(True)
+            self.pause_processiong = False
+
 
     def node_names_table_cellChanged(self):
         names = {'sg': None, 'a1': None, 'a2': None, 'tem': None, 'fp': None}
@@ -98,8 +141,10 @@ class MainWindow(QMainWindow):
 
     def closeEvent(self, event):
         # fire confirmation box
-        ret = self.ui.quit_MsgBox.exec()
-        if ret == QMessageBox.Ok:
+        ret = QMessageBox.question(self, "TEMField",
+                                       "Do you want to exit the application?",
+                                           QMessageBox.Yes, QMessageBox.No)
+        if ret == QMessageBox.Yes:
             self._save_setup()
             event.accept()
         else:
@@ -115,6 +160,8 @@ class MainWindow(QMainWindow):
         self.dwell_time = self.settings.value("settings/dwell_time", 1.)
         self.dotfile = self.settings.value("settings/dotfile", os.path.abspath('./conf/gtem.dot'))
         self.searchpath = self.settings.value("settings/searchpath", ['.', os.path.abspath('./conf')])
+        self.names = self.settings.value("settings/names", {'sg': 'sg', 'a1': 'amp1', 'a2': 'amp2',
+                                                            'tem': 'gtem', 'fp': 'prb'})
         # print("Init: ", self.log_sweep)
         # print(type(self.log_sweep), self.log_sweep)
         self.ui.log_sweep_checkBox.setChecked(self.log_sweep)
@@ -126,6 +173,9 @@ class MainWindow(QMainWindow):
         self.ui.dwell_time_doubleSpinBox.setValue(self.dwell_time)
         self.ui.graph_file_lineEdit.setText(self.dotfile)
         self.ui.search_path_lineEdit.setText(str(self.searchpath))
+        for row,key in enumerate(['sg', 'a1', 'a2', 'tem', 'fp']):
+            self.ui.node_names_tableWidget.setItem(row, 1, QTableWidgetItem(self.names[key]))
+
 
     def _save_setup(self):
         self.settings.setValue("frequencies/start_freq", self.start_freq)
@@ -137,6 +187,7 @@ class MainWindow(QMainWindow):
         self.settings.setValue("settings/dwell_time", self.dwell_time)
         self.settings.setValue("settings/searchpath", self.searchpath)
         self.settings.setValue("settings/dotfile", self.dotfile)
+        self.settings.setValue("settings/names", self.names)
         # print("Exit: ", self.log_sweep)
         self.settings.sync()
 
