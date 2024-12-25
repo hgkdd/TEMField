@@ -2,26 +2,23 @@
 import os.path
 import sys
 import csv
-import time
-import io
 import datetime
+import time
 import numpy as np
-from PySide6 import QtGui, QtCore
 
-from matplotlib.backends.backend_qtagg import FigureCanvas
+from matplotlib.backends.backend_qtagg import FigureCanvas, NavigationToolbar2QT as NavigationToolbar
 from matplotlib.figure import Figure
 
 from PySide6.QtCore import Qt, QLocale, QSettings, QTimer, QEventLoop, QThread
 from PySide6.QtWidgets import (QApplication, QMainWindow, QMessageBox,
-                               QFileDialog, QTableWidgetItem)
-from PySide6.QtGui import QIntValidator
+                               QFileDialog, QTableWidgetItem, QVBoxLayout, QWidget)
 
 import mpy.device.prb_lumiloop_lsporobe as lumiprb
 from mpy.tools.spacing import logspace, linspace
 from TestSusceptibility import TestSusceptibiliy
 
 # Important:
-# You need to run the following command to generate the ui_form.py file
+# You need to run the following command to generate the mainwindow.py file
 #     pyside6-uic mainwindow.ui -o mainwindow.py
 from mainwindow2 import Ui_MainWindow
 
@@ -57,10 +54,33 @@ class MainWindow(QMainWindow):
         self.ui.start_pause_pushButton.clicked.connect(self.start_pause_pushButton_clicked)
         self.ui.EUT_plainTextEdit.textChanged.connect(self.EUT_plainTextEdit_changed)
         self.ui.save_table_pushButton.clicked.connect(self.save_Table)
+        # waveform
+        self.efield_canvas = FigureCanvas(Figure(figsize=(5, 4)))
+        self.efield_toolbar = NavigationToolbar(self.efield_canvas, self)
+
+        layout = QVBoxLayout()
+        layout.addWidget(self.efield_toolbar)
+        layout.addWidget(self.efield_canvas)
+        widget = QWidget()
+        widget.setLayout(layout)
+        self.ui.waveform_scrollArea.setWidget(widget)
+        self._efield_ax = self.efield_canvas.figure.subplots()
+        t = np.linspace(0, 10, 101)
+        # Set up a Line2D.
+        self._line, = self._efield_ax.plot(t, np.sin(t + time.time()))
+        self._timer = self.efield_canvas.new_timer(50)
+        self._timer.add_callback(self._update_efield)
+        self._timer.start()
 
         self.meas = TestSusceptibiliy()
         self.ui.start_pause_pushButton.setDisabled(False)
         self.ui.rf_pushButton.toggled.connect(self.toggle_rf)
+
+    def _update_efield(self):
+        t = np.linspace(0, 10, 101)
+        # Shift the sinusoid as a function of time.
+        self._line.set_data(t, np.sin(t + time.time()))
+        self._line.figure.canvas.draw()
 
     def EUT_plainTextEdit_changed(self):
         self.eut_description = self.ui.EUT_plainTextEdit.toPlainText()
