@@ -54,6 +54,7 @@ class MainWindow(QMainWindow):
         self.ui.start_pause_pushButton.clicked.connect(self.start_pause_pushButton_clicked)
         self.ui.EUT_plainTextEdit.textChanged.connect(self.EUT_plainTextEdit_changed)
         self.ui.save_table_pushButton.clicked.connect(self.save_Table)
+        self.ui.clear_table_pushButton.clicked.connect(self.clear_Table)
         # waveform
         self.efield_canvas = FigureCanvas(Figure(figsize=(5, 4)))
         self.efield_toolbar = NavigationToolbar(self.efield_canvas, self)
@@ -105,6 +106,11 @@ class MainWindow(QMainWindow):
         table.setItem(rowposition, 3, QTableWidgetItem(str(status)))
 
         table.verticalScrollBar().setSliderPosition(table.verticalScrollBar().maximum())
+
+    def clear_Table(self):
+        table = self.ui.table_tableWidget
+        table.clearContents()
+        table.setRowCount(0)
 
     def process_frequencies(self):
         if self.pause_processing:

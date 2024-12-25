@@ -75,6 +75,13 @@ class Ui_MainWindow(object):
 
         self.centralwidget_gridLayout.addLayout(self.main_buttons_horizontalLayout, 2, 0, 1, 1)
 
+        self.permanent_log_plainTextEdit = QPlainTextEdit(self.centralwidget)
+        self.permanent_log_plainTextEdit.setObjectName(u"permanent_log_plainTextEdit")
+        self.permanent_log_plainTextEdit.setAcceptDrops(False)
+        self.permanent_log_plainTextEdit.setReadOnly(True)
+
+        self.centralwidget_gridLayout.addWidget(self.permanent_log_plainTextEdit, 1, 0, 1, 1)
+
         self.centralwidget_tabWidget = QTabWidget(self.centralwidget)
         self.centralwidget_tabWidget.setObjectName(u"centralwidget_tabWidget")
         self.settings_tab = QWidget()
@@ -336,6 +343,27 @@ class Ui_MainWindow(object):
         self.gridLayout.setObjectName(u"gridLayout")
         self.gridLayout_8 = QGridLayout()
         self.gridLayout_8.setObjectName(u"gridLayout_8")
+        self.widget = QWidget(self.table_tab)
+        self.widget.setObjectName(u"widget")
+        self.gridLayout_4 = QGridLayout(self.widget)
+        self.gridLayout_4.setObjectName(u"gridLayout_4")
+        self.save_table_pushButton = QPushButton(self.widget)
+        self.save_table_pushButton.setObjectName(u"save_table_pushButton")
+
+        self.gridLayout_4.addWidget(self.save_table_pushButton, 0, 0, 1, 1, Qt.AlignmentFlag.AlignTop)
+
+        self.clear_table_pushButton = QPushButton(self.widget)
+        self.clear_table_pushButton.setObjectName(u"clear_table_pushButton")
+
+        self.gridLayout_4.addWidget(self.clear_table_pushButton, 1, 0, 1, 1)
+
+        self.verticalSpacer = QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
+
+        self.gridLayout_4.addItem(self.verticalSpacer, 2, 0, 1, 1)
+
+
+        self.gridLayout_8.addWidget(self.widget, 0, 1, 1, 1)
+
         self.table_tableWidget = QTableWidget(self.table_tab)
         if (self.table_tableWidget.columnCount() < 4):
             self.table_tableWidget.setColumnCount(4)
@@ -350,11 +378,6 @@ class Ui_MainWindow(object):
         self.table_tableWidget.setObjectName(u"table_tableWidget")
 
         self.gridLayout_8.addWidget(self.table_tableWidget, 0, 0, 1, 1)
-
-        self.save_table_pushButton = QPushButton(self.table_tab)
-        self.save_table_pushButton.setObjectName(u"save_table_pushButton")
-
-        self.gridLayout_8.addWidget(self.save_table_pushButton, 0, 1, 1, 1, Qt.AlignmentFlag.AlignTop)
 
 
         self.gridLayout.addLayout(self.gridLayout_8, 0, 0, 1, 1)
@@ -373,13 +396,6 @@ class Ui_MainWindow(object):
         self.centralwidget_tabWidget.addTab(self.log_tab, "")
 
         self.centralwidget_gridLayout.addWidget(self.centralwidget_tabWidget, 0, 0, 1, 1)
-
-        self.permanent_log_plainTextEdit = QPlainTextEdit(self.centralwidget)
-        self.permanent_log_plainTextEdit.setObjectName(u"permanent_log_plainTextEdit")
-        self.permanent_log_plainTextEdit.setAcceptDrops(False)
-        self.permanent_log_plainTextEdit.setReadOnly(True)
-
-        self.centralwidget_gridLayout.addWidget(self.permanent_log_plainTextEdit, 1, 0, 1, 1)
 
 
         self.gridLayout_2.addLayout(self.centralwidget_gridLayout, 0, 0, 1, 1)
@@ -510,6 +526,8 @@ class Ui_MainWindow(object):
         self.est_time_label.setText(QCoreApplication.translate("MainWindow", u"Estimated Test Time", None))
         self.centralwidget_tabWidget.setTabText(self.centralwidget_tabWidget.indexOf(self.settings_tab), QCoreApplication.translate("MainWindow", u"Settings", None))
         self.centralwidget_tabWidget.setTabText(self.centralwidget_tabWidget.indexOf(self.waveform_tab), QCoreApplication.translate("MainWindow", u"Waveform", None))
+        self.save_table_pushButton.setText(QCoreApplication.translate("MainWindow", u"Save", None))
+        self.clear_table_pushButton.setText(QCoreApplication.translate("MainWindow", u"Clear", None))
         ___qtablewidgetitem12 = self.table_tableWidget.horizontalHeaderItem(0)
         ___qtablewidgetitem12.setText(QCoreApplication.translate("MainWindow", u"Time", None));
         ___qtablewidgetitem13 = self.table_tableWidget.horizontalHeaderItem(1)
@@ -518,7 +536,6 @@ class Ui_MainWindow(object):
         ___qtablewidgetitem14.setText(QCoreApplication.translate("MainWindow", u"CW E-Field [V/m]", None));
         ___qtablewidgetitem15 = self.table_tableWidget.horizontalHeaderItem(3)
         ___qtablewidgetitem15.setText(QCoreApplication.translate("MainWindow", u"Status", None));
-        self.save_table_pushButton.setText(QCoreApplication.translate("MainWindow", u"Save", None))
         self.centralwidget_tabWidget.setTabText(self.centralwidget_tabWidget.indexOf(self.table_tab), QCoreApplication.translate("MainWindow", u"Table", None))
         self.centralwidget_tabWidget.setTabText(self.centralwidget_tabWidget.indexOf(self.log_tab), QCoreApplication.translate("MainWindow", u"Log", None))
         self.menuFile.setTitle(QCoreApplication.translate("MainWindow", u"File", None))
