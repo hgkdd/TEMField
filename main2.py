@@ -1,10 +1,12 @@
 # This Python file uses the following encoding: utf-8
 import os.path
 import sys
+import csv
 import time
 import io
 import datetime
 import numpy as np
+from PySide6 import QtGui, QtCore
 
 from matplotlib.backends.backend_qtagg import FigureCanvas
 from matplotlib.figure import Figure
@@ -22,16 +24,6 @@ from TestSusceptibility import TestSusceptibiliy
 # You need to run the following command to generate the ui_form.py file
 #     pyside6-uic mainwindow.ui -o mainwindow.py
 from mainwindow2 import Ui_MainWindow
-
-def qsleep (milliseconds):
-    loop = QEventLoop()
-    t = QTimer()
-    # t.timeout.connect(lambda: None)
-    # t.start(milliseconds)
-    #t.stop()
-    t.timeout.connect(loop.quit)
-    t.start(milliseconds)
-    loop.exec()
 
 
 class MainWindow(QMainWindow):
@@ -63,35 +55,67 @@ class MainWindow(QMainWindow):
         self.ui.start_pause_pushButton.setDisabled(True)
         self.node_names_table_cellChanged()
         self.ui.start_pause_pushButton.clicked.connect(self.start_pause_pushButton_clicked)
-
+        self.ui.EUT_plainTextEdit.textChanged.connect(self.EUT_plainTextEdit_changed)
+        self.ui.save_table_pushButton.clicked.connect(self.save_Table)
 
         self.meas = TestSusceptibiliy()
         self.ui.start_pause_pushButton.setDisabled(False)
         self.ui.rf_pushButton.toggled.connect(self.toggle_rf)
 
+    def EUT_plainTextEdit_changed(self):
+        self.eut_description = self.ui.EUT_plainTextEdit.toPlainText()
+
+    def do_long_log(self, text):
+        logtxt = f"{self.get_time_as_string()}: {text}"
+        self.ui.logtab_log_plainTextEdit.appendPlainText(logtxt)
+
+    def do_fill_table(self, freq=None, cw=None, status=None):
+        table = self.ui.table_tableWidget
+        rowposition = table.rowCount()
+        table.insertRow(rowposition)
+        val = QTableWidgetItem(self.get_time_as_string())
+        val.setFlags(val.flags() & ~Qt.ItemIsEditable)
+        table.setItem(rowposition, 0, val)
+        val = QTableWidgetItem(str(freq))
+        val.setFlags(val.flags() & ~Qt.ItemIsEditable)
+        table.setItem(rowposition, 1, val)
+        val = QTableWidgetItem(str(cw))
+        val.setFlags(val.flags() & ~Qt.ItemIsEditable)
+        table.setItem(rowposition, 2, val)
+        table.setItem(rowposition, 3, QTableWidgetItem(str(status)))
+
+        table.verticalScrollBar().setSliderPosition(table.verticalScrollBar().maximum())
+
     def process_frequencies(self):
-        if self.pause_processiong:
+        if self.pause_processing:
             QTimer.singleShot(100, self.process_frequencies)
         else:
             try:
                 f = self.remaining_freqs.pop(0)
                 self.ui.permanent_log_plainTextEdit.appendPlainText(f"Freq: {f} MHz")
+                self.do_long_log(f"set freq to {f} MHz")
+                self.do_fill_table(freq=f, cw=self.cw, status="passed")
                 # wait and process next freq
                 QTimer.singleShot(self.dwell_time * 1000, self.process_frequencies)
             except IndexError:
                 # all freqs processed
+                self.do_long_log("all frequencies processed")
                 self.ui.rf_pushButton.setChecked(False)
                 self.ui.start_pause_pushButton.setText("Start Test")
 
     def toggle_rf(self):
         if self.ui.rf_pushButton.isChecked():
             self.ui.permanent_log_plainTextEdit.appendPlainText('RF On')
+            self.do_long_log("RF On")
         else:
             self.ui.permanent_log_plainTextEdit.appendPlainText('RF Off')
+            self.do_long_log("RF Off")
 
     def start_pause_pushButton_clicked(self):
         if self.ui.start_pause_pushButton.text() == "Start Test":
-            self.pause_processiong = False
+            self.do_long_log("Start Test")
+            self.do_long_log(f"EUT description: {self.eut_description}")
+            self.pause_processing = False
             self.ui.start_pause_pushButton.setText("Pause Test")
             err = self.meas.Init(dwell_time=self.dwell_time,
                     e_target=self.cw,
@@ -103,13 +127,15 @@ class MainWindow(QMainWindow):
             self.ui.rf_pushButton.setChecked(True)
             self.process_frequencies()
         elif self.ui.start_pause_pushButton.text() == "Pause Test":
+            self.do_long_log("Pause Test")
             self.ui.start_pause_pushButton.setText("Cont. Test")
             self.ui.rf_pushButton.setChecked(False)
-            self.pause_processiong = True
+            self.pause_processing = True
         else:
+            self.do_long_log("Continue Test")
             self.ui.start_pause_pushButton.setText("Pause Test")
             self.ui.rf_pushButton.setChecked(True)
-            self.pause_processiong = False
+            self.pause_processing = False
 
 
     def node_names_table_cellChanged(self):
@@ -141,16 +167,20 @@ class MainWindow(QMainWindow):
 
     def closeEvent(self, event):
         # fire confirmation box
+        self.do_long_log("close event")
         ret = QMessageBox.question(self, "TEMField",
                                        "Do you want to exit the application?",
                                            QMessageBox.Yes, QMessageBox.No)
         if ret == QMessageBox.Yes:
             self._save_setup()
+            self.do_long_log("Exit Application")
             event.accept()
         else:
+            self.do_long_log("Continue Application")
             event.ignore()
 
     def _read_setup(self):
+        self.do_long_log("read setup")
         self.start_freq = self.settings.value("frequencies/start_freq", 30.)  # .toFloat()
         self.stop_freq = self.settings.value("frequencies/stop_freq", 1000.)  # .toFloat()
         self.step_freq = self.settings.value("frequencies/step_freq", 1.)  # .toFloat()
@@ -162,6 +192,9 @@ class MainWindow(QMainWindow):
         self.searchpath = self.settings.value("settings/searchpath", ['.', os.path.abspath('./conf')])
         self.names = self.settings.value("settings/names", {'sg': 'sg', 'a1': 'amp1', 'a2': 'amp2',
                                                             'tem': 'gtem', 'fp': 'prb'})
+        self.eut_description = self.settings.value("settings/eut-description", '')
+        self.table_save_dir = self.settings.value("settings/table-save-dir", '.')
+        self.table_save_dir = os.path.abspath(self.table_save_dir)
         # print("Init: ", self.log_sweep)
         # print(type(self.log_sweep), self.log_sweep)
         self.ui.log_sweep_checkBox.setChecked(self.log_sweep)
@@ -175,9 +208,10 @@ class MainWindow(QMainWindow):
         self.ui.search_path_lineEdit.setText(str(self.searchpath))
         for row,key in enumerate(['sg', 'a1', 'a2', 'tem', 'fp']):
             self.ui.node_names_tableWidget.setItem(row, 1, QTableWidgetItem(self.names[key]))
-
+        self.ui.EUT_plainTextEdit.setPlainText(self.eut_description)
 
     def _save_setup(self):
+        self.do_long_log("save setup")
         self.settings.setValue("frequencies/start_freq", self.start_freq)
         self.settings.setValue("frequencies/stop_freq", self.stop_freq)
         self.settings.setValue("frequencies/step_freq", self.step_freq)
@@ -188,6 +222,8 @@ class MainWindow(QMainWindow):
         self.settings.setValue("settings/searchpath", self.searchpath)
         self.settings.setValue("settings/dotfile", self.dotfile)
         self.settings.setValue("settings/names", self.names)
+        self.settings.setValue("settings/eut-description", self.eut_description)
+        self.settings.setValue("settings/table-save-dir", self.table_save_dir)
         # print("Exit: ", self.log_sweep)
         self.settings.sync()
 
@@ -219,6 +255,37 @@ class MainWindow(QMainWindow):
         self.dwell_time = self.ui.dwell_time_doubleSpinBox.value()
         time_s = self.dwell_time*len(self.freqs)
         self.ui.est_time_lineEdit.setText(' '+str(datetime.timedelta(seconds=time_s))+' (hh:mm:ss)')
+
+    def get_time_as_string(self, format=None):
+        if format is None:
+            format = "%Y-%m-%dT%H:%M:%S.%f%z"
+        tz = datetime.datetime.now(datetime.timezone.utc).astimezone().tzinfo
+        tstr = datetime.datetime.now(tz=tz).strftime(format)
+        return tstr
+
+    def save_Table(self):
+        path, _ = QFileDialog.getSaveFileName(self, 'Save as CSV', self.table_save_dir, '(*.csv)')
+        self.table_save_dir = os.path.dirname(path)
+        if path:
+            columns = range(self.ui.table_tableWidget.columnCount())
+            header = [self.ui.table_tableWidget.horizontalHeaderItem(column).text()
+                      for column in columns]
+            with open(path, 'w') as csvfile:
+                t = self.get_time_as_string()
+                csvfile.write(f"# File saved: {t}\n#\n")
+                csvfile.write('# EUT Description\n')
+                plaintext_EUT = self.eut_description
+                for eut_line in plaintext_EUT.splitlines():
+                    csvfile.write(f"# {eut_line}\n")
+
+                writer = csv.writer(
+                    csvfile, dialect='excel', lineterminator='\n')
+                writer.writerow(header)
+                for row in range(self.ui.table_tableWidget.rowCount()):
+                    writer.writerow(
+                        self.ui.table_tableWidget.item(row, column).text()
+                        for column in columns)
+
 
 if __name__ == "__main__":
     #QApplication.shutdown()

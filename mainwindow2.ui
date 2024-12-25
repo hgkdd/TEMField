@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>902</width>
-    <height>709</height>
+    <width>905</width>
+    <height>772</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,6 +17,57 @@
    <layout class="QGridLayout" name="gridLayout_2">
     <item row="0" column="0">
      <layout class="QGridLayout" name="centralwidget_gridLayout">
+      <item row="2" column="0">
+       <layout class="QHBoxLayout" name="main_buttons_horizontalLayout">
+        <item>
+         <widget class="QPushButton" name="start_pause_pushButton">
+          <property name="text">
+           <string>Start Test</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="rf_pushButton">
+          <property name="text">
+           <string>RF</string>
+          </property>
+          <property name="checkable">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="modulation_pushButton">
+          <property name="text">
+           <string>MOD</string>
+          </property>
+          <property name="checkable">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="main_buttons_horizontalSpacer">
+          <property name="orientation">
+           <enum>Qt::Orientation::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="QPushButton" name="quit_pushButton">
+          <property name="text">
+           <string>Quit</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
       <item row="0" column="0">
        <widget class="QTabWidget" name="centralwidget_tabWidget">
         <property name="currentIndex">
@@ -26,8 +77,8 @@
          <attribute name="title">
           <string>Settings</string>
          </attribute>
-         <layout class="QGridLayout" name="gridLayout_4">
-          <item row="0" column="0">
+         <layout class="QVBoxLayout" name="verticalLayout">
+          <item>
            <layout class="QHBoxLayout" name="settings_tab_horizontalLayout">
             <item>
              <widget class="QGroupBox" name="field_strengh_groupBox">
@@ -83,6 +134,32 @@
                    </property>
                   </widget>
                  </item>
+                 <item row="2" column="0">
+                  <widget class="QLabel" name="dwell_time_label">
+                   <property name="text">
+                    <string>Dwell Time</string>
+                   </property>
+                   <property name="buddy">
+                    <cstring>dwell_time_doubleSpinBox</cstring>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="2" column="1">
+                  <widget class="QDoubleSpinBox" name="dwell_time_doubleSpinBox">
+                   <property name="suffix">
+                    <string> s</string>
+                   </property>
+                   <property name="decimals">
+                    <number>3</number>
+                   </property>
+                   <property name="maximum">
+                    <double>999.999000000000024</double>
+                   </property>
+                   <property name="value">
+                    <double>1.000000000000000</double>
+                   </property>
+                  </widget>
+                 </item>
                 </layout>
                </item>
               </layout>
@@ -106,60 +183,6 @@
                    </property>
                   </widget>
                  </item>
-                 <item row="1" column="0">
-                  <widget class="QLabel" name="freq_stop_label">
-                   <property name="text">
-                    <string>Stop</string>
-                   </property>
-                   <property name="buddy">
-                    <cstring>freq_stop_doubleSpinBox</cstring>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="2" column="0">
-                  <widget class="QLabel" name="freq_step_label">
-                   <property name="text">
-                    <string>Step</string>
-                   </property>
-                   <property name="buddy">
-                    <cstring>freq_step_doubleSpinBox</cstring>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="3" column="1">
-                  <widget class="QCheckBox" name="log_sweep_checkBox">
-                   <property name="text">
-                    <string>Log Sweep</string>
-                   </property>
-                   <property name="checked">
-                    <bool>true</bool>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="5" column="1">
-                  <widget class="QPlainTextEdit" name="freqs_plainTextEdit">
-                   <property name="acceptDrops">
-                    <bool>false</bool>
-                   </property>
-                   <property name="readOnly">
-                    <bool>true</bool>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="4" column="0">
-                  <widget class="QLabel" name="nr_freqs_label">
-                   <property name="text">
-                    <string># Freqs.</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="4" column="1">
-                  <widget class="QLineEdit" name="nr_freqs_lineEdit">
-                   <property name="readOnly">
-                    <bool>true</bool>
-                   </property>
-                  </widget>
-                 </item>
                  <item row="0" column="1">
                   <widget class="QDoubleSpinBox" name="freq_start_doubleSpinBox">
                    <property name="suffix">
@@ -179,6 +202,16 @@
                    </property>
                   </widget>
                  </item>
+                 <item row="1" column="0">
+                  <widget class="QLabel" name="freq_stop_label">
+                   <property name="text">
+                    <string>Stop</string>
+                   </property>
+                   <property name="buddy">
+                    <cstring>freq_stop_doubleSpinBox</cstring>
+                   </property>
+                  </widget>
+                 </item>
                  <item row="1" column="1">
                   <widget class="QDoubleSpinBox" name="freq_stop_doubleSpinBox">
                    <property name="suffix">
@@ -195,6 +228,16 @@
                    </property>
                   </widget>
                  </item>
+                 <item row="2" column="0">
+                  <widget class="QLabel" name="freq_step_label">
+                   <property name="text">
+                    <string>Step</string>
+                   </property>
+                   <property name="buddy">
+                    <cstring>freq_step_doubleSpinBox</cstring>
+                   </property>
+                  </widget>
+                 </item>
                  <item row="2" column="1">
                   <widget class="QDoubleSpinBox" name="freq_step_doubleSpinBox">
                    <property name="suffix">
@@ -202,6 +245,40 @@
                    </property>
                    <property name="value">
                     <double>1.000000000000000</double>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="3" column="1">
+                  <widget class="QCheckBox" name="log_sweep_checkBox">
+                   <property name="text">
+                    <string>Log Sweep</string>
+                   </property>
+                   <property name="checked">
+                    <bool>true</bool>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="4" column="0">
+                  <widget class="QLabel" name="nr_freqs_label">
+                   <property name="text">
+                    <string># Freqs.</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="4" column="1">
+                  <widget class="QLineEdit" name="nr_freqs_lineEdit">
+                   <property name="readOnly">
+                    <bool>true</bool>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="5" column="1">
+                  <widget class="QPlainTextEdit" name="freqs_plainTextEdit">
+                   <property name="acceptDrops">
+                    <bool>false</bool>
+                   </property>
+                   <property name="readOnly">
+                    <bool>true</bool>
                    </property>
                   </widget>
                  </item>
@@ -213,52 +290,12 @@
             <item>
              <widget class="QGroupBox" name="settings_groupBox">
               <property name="title">
-               <string>Settings</string>
+               <string>Measument Graph</string>
               </property>
               <layout class="QGridLayout" name="gridLayout_5">
                <item row="0" column="0">
                 <layout class="QFormLayout" name="settings_formLayout">
-                 <item row="0" column="0">
-                  <widget class="QLabel" name="dwell_time_label">
-                   <property name="text">
-                    <string>Dwell Time</string>
-                   </property>
-                   <property name="buddy">
-                    <cstring>dwell_time_doubleSpinBox</cstring>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="1" column="1">
-                  <widget class="QLineEdit" name="est_time_lineEdit">
-                   <property name="readOnly">
-                    <bool>true</bool>
-                   </property>
-                  </widget>
-                 </item>
                  <item row="1" column="0">
-                  <widget class="QLabel" name="est_time_label">
-                   <property name="text">
-                    <string>Est. Test Time</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="0" column="1">
-                  <widget class="QDoubleSpinBox" name="dwell_time_doubleSpinBox">
-                   <property name="suffix">
-                    <string> s</string>
-                   </property>
-                   <property name="decimals">
-                    <number>3</number>
-                   </property>
-                   <property name="maximum">
-                    <double>999.999000000000024</double>
-                   </property>
-                   <property name="value">
-                    <double>1.000000000000000</double>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="2" column="0">
                   <widget class="QLabel" name="graph_file_label">
                    <property name="text">
                     <string>Graph File</string>
@@ -268,7 +305,17 @@
                    </property>
                   </widget>
                  </item>
-                 <item row="3" column="0">
+                 <item row="1" column="1">
+                  <widget class="QLineEdit" name="graph_file_lineEdit">
+                   <property name="text">
+                    <string>gtem.dot</string>
+                   </property>
+                   <property name="readOnly">
+                    <bool>true</bool>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="2" column="0">
                   <widget class="QLabel" name="search_path_label">
                    <property name="text">
                     <string>Search Path</string>
@@ -279,16 +326,6 @@
                   </widget>
                  </item>
                  <item row="2" column="1">
-                  <widget class="QLineEdit" name="graph_file_lineEdit">
-                   <property name="text">
-                    <string>gtem.dot</string>
-                   </property>
-                   <property name="readOnly">
-                    <bool>true</bool>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="3" column="1">
                   <widget class="QLineEdit" name="search_path_lineEdit">
                    <property name="text">
                     <string>[‘.‘, ‘conf‘]</string>
@@ -298,7 +335,14 @@
                    </property>
                   </widget>
                  </item>
-                 <item row="4" column="1">
+                 <item row="3" column="0">
+                  <widget class="QLabel" name="node_names_label">
+                   <property name="text">
+                    <string>Node Names</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="3" column="1">
                   <widget class="QTableWidget" name="node_names_tableWidget">
                    <property name="alternatingRowColors">
                     <bool>true</bool>
@@ -397,19 +441,42 @@
                    </item>
                   </widget>
                  </item>
-                 <item row="4" column="0">
-                  <widget class="QLabel" name="node_names_label">
-                   <property name="text">
-                    <string>Node Names</string>
-                   </property>
-                  </widget>
-                 </item>
                 </layout>
                </item>
               </layout>
              </widget>
             </item>
            </layout>
+          </item>
+          <item>
+           <widget class="QGroupBox" name="EUT_groupBox">
+            <property name="title">
+             <string>EUT</string>
+            </property>
+            <layout class="QVBoxLayout" name="verticalLayout_2">
+             <item>
+              <widget class="QPlainTextEdit" name="EUT_plainTextEdit">
+               <property name="placeholderText">
+                <string>Describe the EUT here</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="est_time_label">
+            <property name="text">
+             <string>Estimated Test Time</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLineEdit" name="est_time_lineEdit">
+            <property name="readOnly">
+             <bool>true</bool>
+            </property>
+           </widget>
           </item>
          </layout>
         </widget>
@@ -428,8 +495,8 @@
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>828</width>
-               <height>348</height>
+               <width>831</width>
+               <height>488</height>
               </rect>
              </property>
             </widget>
@@ -441,9 +508,41 @@
          <attribute name="title">
           <string>Table</string>
          </attribute>
-         <layout class="QGridLayout" name="gridLayout_8">
+         <layout class="QGridLayout" name="gridLayout">
           <item row="0" column="0">
-           <widget class="QTableWidget" name="table_tableWidget"/>
+           <layout class="QGridLayout" name="gridLayout_8">
+            <item row="0" column="0">
+             <widget class="QTableWidget" name="table_tableWidget">
+              <column>
+               <property name="text">
+                <string>Time</string>
+               </property>
+              </column>
+              <column>
+               <property name="text">
+                <string>Frequency [MHz]</string>
+               </property>
+              </column>
+              <column>
+               <property name="text">
+                <string>CW E-Field [V/m]</string>
+               </property>
+              </column>
+              <column>
+               <property name="text">
+                <string>Status</string>
+               </property>
+              </column>
+             </widget>
+            </item>
+            <item row="0" column="1" alignment="Qt::AlignmentFlag::AlignTop">
+             <widget class="QPushButton" name="save_table_pushButton">
+              <property name="text">
+               <string>Save</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
           </item>
          </layout>
         </widget>
@@ -462,57 +561,6 @@
          </layout>
         </widget>
        </widget>
-      </item>
-      <item row="2" column="0">
-       <layout class="QHBoxLayout" name="main_buttons_horizontalLayout">
-        <item>
-         <widget class="QPushButton" name="start_pause_pushButton">
-          <property name="text">
-           <string>Start Test</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QPushButton" name="rf_pushButton">
-          <property name="text">
-           <string>RF</string>
-          </property>
-          <property name="checkable">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QPushButton" name="modulation_pushButton">
-          <property name="text">
-           <string>MOD</string>
-          </property>
-          <property name="checkable">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <spacer name="main_buttons_horizontalSpacer">
-          <property name="orientation">
-           <enum>Qt::Orientation::Horizontal</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>40</width>
-            <height>20</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-        <item>
-         <widget class="QPushButton" name="quit_pushButton">
-          <property name="text">
-           <string>Quit</string>
-          </property>
-         </widget>
-        </item>
-       </layout>
       </item>
       <item row="1" column="0">
        <widget class="QPlainTextEdit" name="permanent_log_plainTextEdit">
@@ -533,7 +581,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>902</width>
+     <width>905</width>
      <height>37</height>
     </rect>
    </property>
@@ -581,15 +629,10 @@
   <tabstop>freq_stop_doubleSpinBox</tabstop>
   <tabstop>freq_step_doubleSpinBox</tabstop>
   <tabstop>log_sweep_checkBox</tabstop>
-  <tabstop>dwell_time_doubleSpinBox</tabstop>
-  <tabstop>graph_file_lineEdit</tabstop>
-  <tabstop>search_path_lineEdit</tabstop>
-  <tabstop>node_names_tableWidget</tabstop>
   <tabstop>start_pause_pushButton</tabstop>
   <tabstop>rf_pushButton</tabstop>
   <tabstop>modulation_pushButton</tabstop>
   <tabstop>quit_pushButton</tabstop>
-  <tabstop>est_time_lineEdit</tabstop>
   <tabstop>logtab_log_plainTextEdit</tabstop>
   <tabstop>freqs_plainTextEdit</tabstop>
   <tabstop>nr_freqs_lineEdit</tabstop>
