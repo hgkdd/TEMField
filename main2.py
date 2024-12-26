@@ -30,6 +30,7 @@ class MainWindow(QMainWindow):
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
 
+        self.table_is_unsaved = False
         self.disable_update = True
         self._read_setup()
         self.disable_update = False
@@ -91,6 +92,7 @@ class MainWindow(QMainWindow):
         self.ui.logtab_log_plainTextEdit.appendPlainText(logtxt)
 
     def do_fill_table(self, freq=None, cw=None, status=None):
+        self.table_is_unsaved = True
         table = self.ui.table_tableWidget
         rowposition = table.rowCount()
         table.insertRow(rowposition)
@@ -111,6 +113,7 @@ class MainWindow(QMainWindow):
         table = self.ui.table_tableWidget
         table.clearContents()
         table.setRowCount(0)
+        self.table_is_unsaved = False
 
     def process_frequencies(self):
         if self.pause_processing:
@@ -139,6 +142,14 @@ class MainWindow(QMainWindow):
 
     def start_pause_pushButton_clicked(self):
         if self.ui.start_pause_pushButton.text() == "Start Test":
+            if self.table_is_unsaved:
+                ret = QMessageBox.question(self, "Unsaved Table detected",
+                                              "Do you want to save the table?", QMessageBox.No, QMessageBox.Yes)
+                if ret == QMessageBox.Yes:
+                    self.save_Table()
+
+            self.clear_Table()
+
             self.do_long_log("Start Test")
             self.do_long_log(f"EUT description: {self.eut_description}")
             self.pause_processing = False
@@ -198,6 +209,11 @@ class MainWindow(QMainWindow):
                                        "Do you want to exit the application?",
                                            QMessageBox.Yes, QMessageBox.No)
         if ret == QMessageBox.Yes:
+            if self.table_is_unsaved:
+                ret = QMessageBox.question(self, "Table is unsaved",
+                                              "Do you want to save the table?", QMessageBox.No, QMessageBox.Yes)
+                if ret == QMessageBox.Yes:
+                    self.save_Table()
             self._save_setup()
             self.do_long_log("Exit Application")
             event.accept()

@@ -651,21 +651,29 @@
  <tabstops>
   <tabstop>cw_doubleSpinBox</tabstop>
   <tabstop>am_spinBox</tabstop>
+  <tabstop>dwell_time_doubleSpinBox</tabstop>
   <tabstop>freq_start_doubleSpinBox</tabstop>
   <tabstop>freq_stop_doubleSpinBox</tabstop>
   <tabstop>freq_step_doubleSpinBox</tabstop>
   <tabstop>log_sweep_checkBox</tabstop>
+  <tabstop>EUT_plainTextEdit</tabstop>
   <tabstop>start_pause_pushButton</tabstop>
   <tabstop>rf_pushButton</tabstop>
   <tabstop>modulation_pushButton</tabstop>
   <tabstop>quit_pushButton</tabstop>
-  <tabstop>logtab_log_plainTextEdit</tabstop>
-  <tabstop>freqs_plainTextEdit</tabstop>
-  <tabstop>nr_freqs_lineEdit</tabstop>
-  <tabstop>permanent_log_plainTextEdit</tabstop>
-  <tabstop>centralwidget_tabWidget</tabstop>
+  <tabstop>graph_file_lineEdit</tabstop>
+  <tabstop>search_path_lineEdit</tabstop>
   <tabstop>waveform_scrollArea</tabstop>
   <tabstop>table_tableWidget</tabstop>
+  <tabstop>est_time_lineEdit</tabstop>
+  <tabstop>logtab_log_plainTextEdit</tabstop>
+  <tabstop>nr_freqs_lineEdit</tabstop>
+  <tabstop>permanent_log_plainTextEdit</tabstop>
+  <tabstop>node_names_tableWidget</tabstop>
+  <tabstop>save_table_pushButton</tabstop>
+  <tabstop>freqs_plainTextEdit</tabstop>
+  <tabstop>clear_table_pushButton</tabstop>
+  <tabstop>centralwidget_tabWidget</tabstop>
  </tabstops>
  <resources/>
  <connections>
