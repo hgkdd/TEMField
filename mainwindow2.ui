@@ -475,17 +475,30 @@
            </widget>
           </item>
           <item>
-           <widget class="QLabel" name="est_time_label">
-            <property name="text">
-             <string>Estimated Test Time</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QLineEdit" name="est_time_lineEdit">
-            <property name="readOnly">
-             <bool>true</bool>
-            </property>
+           <widget class="QWidget" name="est_time_widget" native="true">
+            <layout class="QHBoxLayout" name="horizontalLayout">
+             <item>
+              <widget class="QLabel" name="est_time_label">
+               <property name="text">
+                <string>Estimated Test Time</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLineEdit" name="est_time_lineEdit">
+               <property name="readOnly">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QProgressBar" name="test_progressBar">
+               <property name="value">
+                <number>0</number>
+               </property>
+              </widget>
+             </item>
+            </layout>
            </widget>
           </item>
          </layout>
@@ -665,7 +678,6 @@
   <tabstop>search_path_lineEdit</tabstop>
   <tabstop>waveform_scrollArea</tabstop>
   <tabstop>table_tableWidget</tabstop>
-  <tabstop>est_time_lineEdit</tabstop>
   <tabstop>logtab_log_plainTextEdit</tabstop>
   <tabstop>nr_freqs_lineEdit</tabstop>
   <tabstop>permanent_log_plainTextEdit</tabstop>

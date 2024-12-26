@@ -121,6 +121,9 @@ class MainWindow(QMainWindow):
         else:
             try:
                 f = self.remaining_freqs.pop(0)
+                Nf = len(self.freqs)
+                Nr = len(self.remaining_freqs)
+                self.ui.test_progressBar.setValue(int((Nf-Nr) / Nf * 100))
                 self.ui.permanent_log_plainTextEdit.appendPlainText(f"Freq: {f} MHz")
                 self.do_long_log(f"set freq to {f} MHz")
                 self.do_fill_table(freq=f, cw=self.cw, status="passed")
@@ -149,7 +152,7 @@ class MainWindow(QMainWindow):
                     self.save_Table()
 
             self.clear_Table()
-
+            self.ui.test_progressBar.setValue(0)
             self.do_long_log("Start Test")
             self.do_long_log(f"EUT description: {self.eut_description}")
             self.pause_processing = False

@@ -19,10 +19,10 @@ from PySide6.QtGui import (QAction, QBrush, QColor, QConicalGradient,
 from PySide6.QtWidgets import (QAbstractItemView, QApplication, QCheckBox, QDoubleSpinBox,
     QFormLayout, QGridLayout, QGroupBox, QHBoxLayout,
     QHeaderView, QLabel, QLineEdit, QMainWindow,
-    QMenu, QMenuBar, QPlainTextEdit, QPushButton,
-    QScrollArea, QSizePolicy, QSpacerItem, QSpinBox,
-    QStatusBar, QTabWidget, QTableWidget, QTableWidgetItem,
-    QVBoxLayout, QWidget)
+    QMenu, QMenuBar, QPlainTextEdit, QProgressBar,
+    QPushButton, QScrollArea, QSizePolicy, QSpacerItem,
+    QSpinBox, QStatusBar, QTabWidget, QTableWidget,
+    QTableWidgetItem, QVBoxLayout, QWidget)
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -310,16 +310,29 @@ class Ui_MainWindow(object):
 
         self.verticalLayout.addWidget(self.EUT_groupBox)
 
-        self.est_time_label = QLabel(self.settings_tab)
+        self.est_time_widget = QWidget(self.settings_tab)
+        self.est_time_widget.setObjectName(u"est_time_widget")
+        self.horizontalLayout = QHBoxLayout(self.est_time_widget)
+        self.horizontalLayout.setObjectName(u"horizontalLayout")
+        self.est_time_label = QLabel(self.est_time_widget)
         self.est_time_label.setObjectName(u"est_time_label")
 
-        self.verticalLayout.addWidget(self.est_time_label)
+        self.horizontalLayout.addWidget(self.est_time_label)
 
-        self.est_time_lineEdit = QLineEdit(self.settings_tab)
+        self.est_time_lineEdit = QLineEdit(self.est_time_widget)
         self.est_time_lineEdit.setObjectName(u"est_time_lineEdit")
         self.est_time_lineEdit.setReadOnly(True)
 
-        self.verticalLayout.addWidget(self.est_time_lineEdit)
+        self.horizontalLayout.addWidget(self.est_time_lineEdit)
+
+        self.test_progressBar = QProgressBar(self.est_time_widget)
+        self.test_progressBar.setObjectName(u"test_progressBar")
+        self.test_progressBar.setValue(0)
+
+        self.horizontalLayout.addWidget(self.test_progressBar)
+
+
+        self.verticalLayout.addWidget(self.est_time_widget)
 
         self.centralwidget_tabWidget.addTab(self.settings_tab, "")
         self.waveform_tab = QWidget()
@@ -435,8 +448,7 @@ class Ui_MainWindow(object):
         QWidget.setTabOrder(self.graph_file_lineEdit, self.search_path_lineEdit)
         QWidget.setTabOrder(self.search_path_lineEdit, self.waveform_scrollArea)
         QWidget.setTabOrder(self.waveform_scrollArea, self.table_tableWidget)
-        QWidget.setTabOrder(self.table_tableWidget, self.est_time_lineEdit)
-        QWidget.setTabOrder(self.est_time_lineEdit, self.logtab_log_plainTextEdit)
+        QWidget.setTabOrder(self.table_tableWidget, self.logtab_log_plainTextEdit)
         QWidget.setTabOrder(self.logtab_log_plainTextEdit, self.nr_freqs_lineEdit)
         QWidget.setTabOrder(self.nr_freqs_lineEdit, self.permanent_log_plainTextEdit)
         QWidget.setTabOrder(self.permanent_log_plainTextEdit, self.node_names_tableWidget)
