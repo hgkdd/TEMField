@@ -6,10 +6,11 @@ import datetime
 import time
 import numpy as np
 
-from matplotlib.backends.backend_qtagg import FigureCanvas, NavigationToolbar2QT as NavigationToolbar
+from matplotlib.backends.backend_qtagg import (FigureCanvasQTAgg as FigureCanvas,
+                                               NavigationToolbar2QT as NavigationToolbar)
 from matplotlib.figure import Figure
 
-from PySide6.QtCore import Qt, QLocale, QSettings, QTimer, QEventLoop, QThread
+from PySide6.QtCore import Qt, QLocale, QSettings, QTimer
 from PySide6.QtWidgets import (QApplication, QMainWindow, QMessageBox,
                                QFileDialog, QTableWidgetItem, QVBoxLayout, QWidget)
 
@@ -185,10 +186,10 @@ class MainWindow(QMainWindow):
         self.names = names
 
     def load_graph(self):
-        fullfile = QFileDialog.getOpenFileName(self,
+        fullfile, _ = QFileDialog.getOpenFileName(self,
                                                    "Open Graph File",
                                                    ".",
-                                                   "dot files (*.dot)")[0]
+                                                   "dot files (*.dot)")
         dotpath, self.dotfile = os.path.split(fullfile)
         self.searchpath = [dotpath,]
         self.ui.graph_file_lineEdit.setText(self.dotfile)
@@ -197,7 +198,8 @@ class MainWindow(QMainWindow):
 
 
     def about_triggered(self):
-        QMessageBox.about(self, "TEMField", "Susceptibility measurements in (G)TEM-cell.\n\n(c) Prof. H. G. Krauthäuser")
+        QMessageBox.about(self, "TEMField",
+                          "Susceptibility measurements in (G)TEM-cell.\n\n(c) 2024: Prof. H. G. Krauthäuser")
 
     def cw_doubleSpinBox_changed(self):
         self.cw = self.ui.cw_doubleSpinBox.value()
