@@ -21,7 +21,7 @@ from TestSusceptibility import TestSusceptibiliy
 # Important:
 # You need to run the following command to generate the mainwindow.py file
 #     pyside6-uic mainwindow.ui -o mainwindow.py
-from mainwindow2 import Ui_MainWindow
+from mainwindow import Ui_MainWindow
 
 
 class MainWindow(QMainWindow):
