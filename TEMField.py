@@ -16,6 +16,7 @@ from PySide6.QtWidgets import (QApplication, QMainWindow, QMessageBox,
 
 import mpy.device.prb_lumiloop_lsporobe as lumiprb
 from mpy.tools.spacing import logspace, linspace
+from mpy.tools.util import tstamp
 from TestSusceptibility import TestSusceptibiliy
 
 # Important:
@@ -69,6 +70,10 @@ class MainWindow(QMainWindow):
         self.ui.waveform_scrollArea.setWidget(widget)
         self._efield_ax = self.efield_canvas.figure.subplots()
         t = np.linspace(0, 10, 101)
+        self._efield_ax.set_title("Dummy Plot")
+        self._efield_ax.set_xlabel("Time (s)")
+        self._efield_ax.set_ylabel("Voltage (V)")
+        self._efield_ax.grid(True)
         # Set up a Line2D.
         self._line, = self._efield_ax.plot(t, np.sin(t + time.time()))
         self._timer = self.efield_canvas.new_timer(50)
@@ -305,9 +310,11 @@ class MainWindow(QMainWindow):
 
     def get_time_as_string(self, format=None):
         if format is None:
+            tstr = tstamp()   # default format from Mpy
+        elif format == '':
             format = "%Y-%m-%dT%H:%M:%S.%f%z"
-        tz = datetime.datetime.now(datetime.timezone.utc).astimezone().tzinfo
-        tstr = datetime.datetime.now(tz=tz).strftime(format)
+            tz = datetime.datetime.now(datetime.timezone.utc).astimezone().tzinfo
+            tstr = datetime.datetime.now(tz=tz).strftime(format)
         return tstr
 
     def save_Table(self):
