@@ -74,19 +74,78 @@ class TestSusceptibiliy(Measure):
         #self.ddict = self.mg.CreateDevices()
         return 0
 
-    def init_measurement(self):
-        pass
-        #err = self.mg.Init_Devices()
-        #stat = self.mg.Zero_Devices()
-        #stat = self.mg.RFOn_Devices()
+    def init_measurement(self, am):
+        err = self.mg.CreateDevices()
+        err = self.mg.Init_Devices()
+        stat = self.mg.Zero_Devices()
+        #stat = self.mg.CmdDevices(True, 'ConfAM', {'source': 'INT1',
+        #                                           'freq': 1e3,
+        #                                           'depth': am,
+        #                                           'waveform': 'SINE',
+        #                                           'LFOut': 'OFF'})
+        stat = self.mg.CmdDevices(True, 'ConfAM', 'INT1',1e3,am*1e-2,'SINE','OFF')
+        stat = self.mg.RFOn_Devices()
 
+    def rf_on(self):
+        try:
+            stat = self.mg.RFOn_Devices()
+            if stat == 0:
+                return True
+            else:
+                return False
+        except AttributeError:
+            return False
+
+    def rf_off(self):
+        try:
+            stat = self.mg.RFOff_Devices()
+            if stat == 0:
+                return True
+            else:
+                return False
+        except AttributeError:
+            return False
+
+    def am_on(self):
+        try:
+            stat = self.mg.CmdDevices(True, 'AMOn')
+            if stat == 0:
+                return True
+            else:
+                return False
+        except AttributeError:
+            return False
+
+    def am_off(self):
+        try:
+            stat = self.mg.CmdDevices(True, 'AMOff')
+            if stat == 0:
+                return True
+            else:
+                return False
+        except AttributeError:
+            return False
+
+    def adjust_level(self):
+        leveler = mgraph.Leveler(**self.leveler_par)
+        leveler.adjust_level(self.e_target)
+        res = self.mg.Read([self.mg.name.fp])
+        return res[self.mg.name.fp]
+
+    def get_waveform(self):
+        try:
+            fp = self.mg.nodes['prb']['inst']
+            # print(fp)
+            err, ts, ex, ey, ez = getattr(fp, 'GetWaveform')()
+            return err, ts, ex, ey, ez
+        except AttributeError:
+            return -1, None, None, None, None
 
     def do_measurement(self, f):
         minf, maxf = self.mg.SetFreq_Devices(f)
         self.mg.EvaluateConditions()
-        leveler = mgraph.Leveler(**self.leveler_par)
-        leveler.adjust_level(self.e_target)
-        res = self.mg.Read([self.mg.name.fp])
+        res = self.adjust_level()
+        # res = self.mg.Read([self.mg.name.fp])
         print(f, res[self.mg.name.fp][0])
         self.mg.CmdDevices(True, 'AMOn')
         # wait delay seconds
@@ -97,8 +156,11 @@ class TestSusceptibiliy(Measure):
         self.mg.CmdDevices(True, 'AMOff')
 
     def quit_measurement(self):
-        stat = self.mg.RFOff_Devices()
-        stat = self.mg.Quit_Devices()
+        try:
+            stat = self.mg.RFOff_Devices()
+            stat = self.mg.Quit_Devices()
+        except AttributeError:
+            pass
 
     def __HandleUserInterrupt(self, dct, ignorelist='', handler=None):
         if callable(handler):

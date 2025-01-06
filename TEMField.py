@@ -4,6 +4,7 @@ import sys
 import csv
 import datetime
 import time
+
 import numpy as np
 
 from matplotlib.backends.backend_qtagg import (FigureCanvasQTAgg as FigureCanvas,
@@ -14,9 +15,11 @@ from PySide6.QtCore import Qt, QLocale, QSettings, QTimer
 from PySide6.QtWidgets import (QApplication, QMainWindow, QMessageBox,
                                QFileDialog, QTableWidgetItem, QVBoxLayout, QWidget)
 
-import mpy.device.prb_lumiloop_lsporobe as lumiprb
+# import mpy.device.prb_lumiloop_lsprobe as lumiprb
 from mpy.tools.spacing import logspace, linspace
 from mpy.tools.util import tstamp
+from mpy.tools.sin_fit import fit_sin
+
 from TestSusceptibility import TestSusceptibiliy
 
 # Important:
@@ -70,32 +73,59 @@ class MainWindow(QMainWindow):
         self.ui.waveform_scrollArea.setWidget(widget)
         self._efield_ax = self.efield_canvas.figure.subplots()
         t = np.linspace(0, 10, 101)
+        self.lineEx, = self._efield_ax.plot(t, np.sin(t + time.time()), marker=',')
+        self.lineEy, = self._efield_ax.plot(t, np.sin(t + time.time()*2), marker=',')
+        self.lineEz, = self._efield_ax.plot(t, np.sin(t + time.time()*3), marker=',')
+        self.lineSin, = self._efield_ax.plot(t, np.sin(t + time.time()), ls='-')
+        self._efield_ax.set_xlabel("Time in ms")
+        self._efield_ax.set_ylabel("E-Field in V/m")
         self._efield_ax.set_title("Dummy Plot")
-        self._efield_ax.set_xlabel("Time (s)")
-        self._efield_ax.set_ylabel("Voltage (V)")
         self._efield_ax.grid(True)
         # Set up a Line2D.
-        self._line, = self._efield_ax.plot(t, np.sin(t + time.time()))
         self._timer = self.efield_canvas.new_timer(50)
         self._timer.add_callback(self._update_efield)
         self._timer.start()
 
         self.meas = TestSusceptibiliy()
         self.ui.start_pause_pushButton.setDisabled(False)
-        self.ui.rf_pushButton.toggled.connect(self.toggle_rf)
+        self.ui.rf_pushButton.clicked.connect(self.toggle_rf)
+        self.rf_isON = False
+        self.ui.modulation_pushButton.clicked.connect(self.toggle_am)
+        self.am_isON = False
 
     def _update_efield(self):
-        t = np.linspace(0, 10, 101)
-        # Shift the sinusoid as a function of time.
-        self._line.set_data(t, np.sin(t + time.time()))
-        self._line.figure.canvas.draw()
+        err, t, ex, ey, ez = self.meas.get_waveform()
+        # print(err)
+        if err < 0:
+            t = np.linspace(0, 10, 101)
+            # Shift the sinusoid as a function of time.
+            self.lineEx.set_data(t, np.sin(t + time.time()))
+            self.lineEy.set_data(t, np.sin(t + time.time() * 2))
+            self.lineEz.set_data(t, np.sin(t + time.time() * 3))
+            self.lineSin.set_data(t, np.sin(t + time.time()))
+        else:
+            self.lineEx.set_data(t, ex)
+            self.lineEy.set_data(t, ey)
+            self.lineEz.set_data(t, ez)
+            fitdata = fit_sin(t, ex)
+            freqAM = fitdata['freq']
+            meanAM = fitdata['offset']
+            modAM = abs(fitdata['amp']) / meanAM * 100
+            self.lineSin.set_data(t, fitdata['fitfunc'](t))
+            self._efield_ax.set_title(f"E-Field: {meanAM:.2f} V/m, AM-Freq: {freqAM:.2f} kHz, AM-Depth: {modAM:.2f} %")
+            self._efield_ax.relim()
+            self._efield_ax.autoscale_view(True, True, True)
+        self.lineEx.figure.canvas.draw()
 
     def EUT_plainTextEdit_changed(self):
         self.eut_description = self.ui.EUT_plainTextEdit.toPlainText()
 
-    def do_long_log(self, text):
-        logtxt = f"{self.get_time_as_string()}: {text}"
-        self.ui.logtab_log_plainTextEdit.appendPlainText(logtxt)
+    def log(self, text, short = None):
+        if short is None:
+            short = text
+        longtext = f"{self.get_time_as_string()}: {text}"
+        self.ui.logtab_log_plainTextEdit.appendPlainText(longtext)
+        self.ui.permanent_log_plainTextEdit.appendPlainText(short)
 
     def do_fill_table(self, freq=None, cw=None, status=None):
         self.table_is_unsaved = True
@@ -105,10 +135,10 @@ class MainWindow(QMainWindow):
         val = QTableWidgetItem(self.get_time_as_string())
         val.setFlags(val.flags() & ~Qt.ItemIsEditable)
         table.setItem(rowposition, 0, val)
-        val = QTableWidgetItem(str(freq))
+        val = QTableWidgetItem(str(freq*1e-6))
         val.setFlags(val.flags() & ~Qt.ItemIsEditable)
         table.setItem(rowposition, 1, val)
-        val = QTableWidgetItem(str(cw))
+        val = QTableWidgetItem(str(round(cw,2)))
         val.setFlags(val.flags() & ~Qt.ItemIsEditable)
         table.setItem(rowposition, 2, val)
         table.setItem(rowposition, 3, QTableWidgetItem(str(status)))
@@ -123,6 +153,7 @@ class MainWindow(QMainWindow):
 
     def process_frequencies(self):
         if self.pause_processing:
+            # stay responsive
             QTimer.singleShot(100, self.process_frequencies)
         else:
             try:
@@ -130,24 +161,66 @@ class MainWindow(QMainWindow):
                 Nf = len(self.freqs)
                 Nr = len(self.remaining_freqs)
                 self.ui.test_progressBar.setValue(int((Nf-Nr) / Nf * 100))
-                self.ui.permanent_log_plainTextEdit.appendPlainText(f"Freq: {f} MHz")
-                self.do_long_log(f"set freq to {f} MHz")
-                self.do_fill_table(freq=f, cw=self.cw, status="passed")
+                self.log(f"set freq to {f} MHz", short = f'Freq: {round(f*1e-6,2)} MHz')
+                self.meas.mg.SetFreq_Devices(f)
+                self.meas.mg.EvaluateConditions()
+                self.am_off()
+                self.rf_on()
+                self.log('adjust Level...')
+                self.e_field = self.meas.adjust_level()
+                self.log(f"E-Field: Ex = {self.e_field[0]}, Ey = {self.e_field[1]}, Ey = {self.e_field[2]},",
+                         short = f'Ex = {round(self.e_field[0].get_expectation_value_as_float(),2)} V/m')
+                self.am_on()
+                self.do_fill_table(freq=f, cw=self.e_field[0].get_expectation_value_as_float(), status="passed")
                 # wait and process next freq
                 QTimer.singleShot(self.dwell_time * 1000, self.process_frequencies)
             except IndexError:
                 # all freqs processed
-                self.do_long_log("all frequencies processed")
+                self.rf_off()
+                self.am_off()
+                self.log("all frequencies processed")
                 self.ui.rf_pushButton.setChecked(False)
                 self.ui.start_pause_pushButton.setText("Start Test")
 
     def toggle_rf(self):
-        if self.ui.rf_pushButton.isChecked():
-            self.ui.permanent_log_plainTextEdit.appendPlainText('RF On')
-            self.do_long_log("RF On")
+        if self.rf_isON is False:
+            self.rf_on()
         else:
-            self.ui.permanent_log_plainTextEdit.appendPlainText('RF Off')
-            self.do_long_log("RF Off")
+            self.rf_off()
+
+    def rf_on(self):
+        status = self.meas.rf_on()
+        if status is True:
+            self.log("RF On")
+            self.rf_isON = True
+        self.ui.rf_pushButton.setChecked(self.rf_isON)
+
+    def rf_off(self):
+        status = self.meas.rf_off()
+        if status is True:
+            self.log("RF Off")
+            self.rf_isON = False
+        self.ui.rf_pushButton.setChecked(self.rf_isON)
+
+    def toggle_am(self):
+        if self.am_isON is False:
+            self.am_on()
+        else:
+            self.am_off()
+
+    def am_on(self):
+        status = self.meas.am_on()
+        if status is True:
+            self.log("AM On")
+            self.am_isON = True
+        self.ui.modulation_pushButton.setChecked(self.am_isON)
+
+    def am_off(self):
+        status = self.meas.am_off()
+        if status is True:
+            self.log("AM Off")
+            self.am_isON = False
+        self.ui.modulation_pushButton.setChecked(self.am_isON)
 
     def start_pause_pushButton_clicked(self):
         if self.ui.start_pause_pushButton.text() == "Start Test":
@@ -159,8 +232,8 @@ class MainWindow(QMainWindow):
 
             self.clear_Table()
             self.ui.test_progressBar.setValue(0)
-            self.do_long_log("Start Test")
-            self.do_long_log(f"EUT description: {self.eut_description}")
+            self.log("Start Test")
+            self.log(f"EUT description: {self.eut_description}")
             self.pause_processing = False
             self.ui.start_pause_pushButton.setText("Pause Test")
             err = self.meas.Init(dwell_time=self.dwell_time,
@@ -168,17 +241,17 @@ class MainWindow(QMainWindow):
                     names=self.names,
                     dotfile=self.dotfile,
                     SearchPath=self.searchpath)
-            self.meas.init_measurement()
+            self.meas.init_measurement(self.am)
             self.remaining_freqs = self.freqs.copy()
             self.ui.rf_pushButton.setChecked(True)
             self.process_frequencies()
         elif self.ui.start_pause_pushButton.text() == "Pause Test":
-            self.do_long_log("Pause Test")
+            self.log("Pause Test")
             self.ui.start_pause_pushButton.setText("Cont. Test")
             self.ui.rf_pushButton.setChecked(False)
             self.pause_processing = True
         else:
-            self.do_long_log("Continue Test")
+            self.log("Continue Test")
             self.ui.start_pause_pushButton.setText("Pause Test")
             self.ui.rf_pushButton.setChecked(True)
             self.pause_processing = False
@@ -214,7 +287,7 @@ class MainWindow(QMainWindow):
 
     def closeEvent(self, event):
         # fire confirmation box
-        self.do_long_log("close event")
+        self.log("close event")
         ret = QMessageBox.question(self, "TEMField",
                                        "Do you want to exit the application?",
                                            QMessageBox.Yes, QMessageBox.No)
@@ -225,21 +298,22 @@ class MainWindow(QMainWindow):
                 if ret == QMessageBox.Yes:
                     self.save_Table()
             self._save_setup()
-            self.do_long_log("Exit Application")
+            self.meas.quit_measurement()
+            self.log("Exit Application")
             event.accept()
         else:
-            self.do_long_log("Continue Application")
+            self.log("Continue Application")
             event.ignore()
 
     def _read_setup(self):
-        self.do_long_log("read setup")
-        self.start_freq = self.settings.value("frequencies/start_freq", 30.)  # .toFloat()
-        self.stop_freq = self.settings.value("frequencies/stop_freq", 1000.)  # .toFloat()
-        self.step_freq = self.settings.value("frequencies/step_freq", 1.)  # .toFloat()
-        self.log_sweep = self.settings.value("frequencies/log_sweep", True)  # .toInt()
-        self.cw = self.settings.value("fieldstrength/cw", 1.)
-        self.am = self.settings.value("fieldstrength/am", 80.)
-        self.dwell_time = self.settings.value("settings/dwell_time", 1.)
+        self.log("read setup")
+        self.start_freq = float(self.settings.value("frequencies/start_freq", 30.))
+        self.stop_freq = float(self.settings.value("frequencies/stop_freq", 1000.))
+        self.step_freq = float(self.settings.value("frequencies/step_freq", 1.))
+        self.log_sweep = (True if self.settings.value("frequencies/log_sweep", True) in (True, 'true', 'True') else False)
+        self.cw = float(self.settings.value("fieldstrength/cw", 1.))
+        self.am = float(self.settings.value("fieldstrength/am", 80.))
+        self.dwell_time = float(self.settings.value("settings/dwell_time", 1.))
         self.dotfile = self.settings.value("settings/dotfile", os.path.abspath('./conf/gtem.dot'))
         self.searchpath = self.settings.value("settings/searchpath", ['.', os.path.abspath('./conf')])
         self.names = self.settings.value("settings/names", {'sg': 'sg', 'a1': 'amp1', 'a2': 'amp2',
@@ -263,7 +337,7 @@ class MainWindow(QMainWindow):
         self.ui.EUT_plainTextEdit.setPlainText(self.eut_description)
 
     def _save_setup(self):
-        self.do_long_log("save setup")
+        self.log("save setup")
         self.settings.setValue("frequencies/start_freq", self.start_freq)
         self.settings.setValue("frequencies/stop_freq", self.stop_freq)
         self.settings.setValue("frequencies/step_freq", self.step_freq)
@@ -301,6 +375,7 @@ class MainWindow(QMainWindow):
             self.freqs = linspace(self.start_freq, self.stop_freq, self.step_freq, endpoint=True)
         else:
             self.freqs = logspace(self.start_freq, self.stop_freq, 1+self.step_freq*0.01, endpoint=True)
+        self.freqs = [f*1e6 for f in self.freqs]  # convert to Hz
         self.ui.nr_freqs_lineEdit.setText(str(len(self.freqs)))
         self.ui.freqs_plainTextEdit.setPlainText('\n'.join(map(str, self.freqs)))
 
