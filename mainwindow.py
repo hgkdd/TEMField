@@ -28,7 +28,7 @@ class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         if not MainWindow.objectName():
             MainWindow.setObjectName(u"MainWindow")
-        MainWindow.resize(905, 772)
+        MainWindow.resize(1073, 816)
         self.actionAbout = QAction(MainWindow)
         self.actionAbout.setObjectName(u"actionAbout")
         self.actionQuit = QAction(MainWindow)
@@ -62,6 +62,29 @@ class Ui_MainWindow(object):
         self.modulation_pushButton.setCheckable(True)
 
         self.main_buttons_horizontalLayout.addWidget(self.modulation_pushButton)
+
+        self.est_time_label = QLabel(self.centralwidget)
+        self.est_time_label.setObjectName(u"est_time_label")
+
+        self.main_buttons_horizontalLayout.addWidget(self.est_time_label)
+
+        self.est_time_lineEdit = QLineEdit(self.centralwidget)
+        self.est_time_lineEdit.setObjectName(u"est_time_lineEdit")
+        self.est_time_lineEdit.setReadOnly(True)
+
+        self.main_buttons_horizontalLayout.addWidget(self.est_time_lineEdit)
+
+        self.test_progressBar = QProgressBar(self.centralwidget)
+        self.test_progressBar.setObjectName(u"test_progressBar")
+        self.test_progressBar.setValue(0)
+
+        self.main_buttons_horizontalLayout.addWidget(self.test_progressBar)
+
+        self.EUT_progressBar = QProgressBar(self.centralwidget)
+        self.EUT_progressBar.setObjectName(u"EUT_progressBar")
+        self.EUT_progressBar.setValue(0)
+
+        self.main_buttons_horizontalLayout.addWidget(self.EUT_progressBar)
 
         self.main_buttons_horizontalSpacer = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
 
@@ -310,30 +333,6 @@ class Ui_MainWindow(object):
 
         self.verticalLayout.addWidget(self.EUT_groupBox)
 
-        self.est_time_widget = QWidget(self.settings_tab)
-        self.est_time_widget.setObjectName(u"est_time_widget")
-        self.horizontalLayout = QHBoxLayout(self.est_time_widget)
-        self.horizontalLayout.setObjectName(u"horizontalLayout")
-        self.est_time_label = QLabel(self.est_time_widget)
-        self.est_time_label.setObjectName(u"est_time_label")
-
-        self.horizontalLayout.addWidget(self.est_time_label)
-
-        self.est_time_lineEdit = QLineEdit(self.est_time_widget)
-        self.est_time_lineEdit.setObjectName(u"est_time_lineEdit")
-        self.est_time_lineEdit.setReadOnly(True)
-
-        self.horizontalLayout.addWidget(self.est_time_lineEdit)
-
-        self.test_progressBar = QProgressBar(self.est_time_widget)
-        self.test_progressBar.setObjectName(u"test_progressBar")
-        self.test_progressBar.setValue(0)
-
-        self.horizontalLayout.addWidget(self.test_progressBar)
-
-
-        self.verticalLayout.addWidget(self.est_time_widget)
-
         self.centralwidget_tabWidget.addTab(self.settings_tab, "")
         self.waveform_tab = QWidget()
         self.waveform_tab.setObjectName(u"waveform_tab")
@@ -344,7 +343,7 @@ class Ui_MainWindow(object):
         self.waveform_scrollArea.setWidgetResizable(True)
         self.waveform_scrollAreaWidgetContents = QWidget()
         self.waveform_scrollAreaWidgetContents.setObjectName(u"waveform_scrollAreaWidgetContents")
-        self.waveform_scrollAreaWidgetContents.setGeometry(QRect(0, 0, 831, 488))
+        self.waveform_scrollAreaWidgetContents.setGeometry(QRect(0, 0, 1027, 538))
         self.waveform_scrollArea.setWidget(self.waveform_scrollAreaWidgetContents)
 
         self.gridLayout_7.addWidget(self.waveform_scrollArea, 0, 0, 1, 1)
@@ -416,7 +415,7 @@ class Ui_MainWindow(object):
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QMenuBar(MainWindow)
         self.menubar.setObjectName(u"menubar")
-        self.menubar.setGeometry(QRect(0, 0, 905, 37))
+        self.menubar.setGeometry(QRect(0, 0, 1073, 22))
         self.menuFile = QMenu(self.menubar)
         self.menuFile.setObjectName(u"menuFile")
         MainWindow.setMenuBar(self.menubar)
@@ -489,6 +488,7 @@ class Ui_MainWindow(object):
         self.start_pause_pushButton.setText(QCoreApplication.translate("MainWindow", u"Start Test", None))
         self.rf_pushButton.setText(QCoreApplication.translate("MainWindow", u"RF", None))
         self.modulation_pushButton.setText(QCoreApplication.translate("MainWindow", u"MOD", None))
+        self.est_time_label.setText(QCoreApplication.translate("MainWindow", u"Estimated Test Time", None))
         self.quit_pushButton.setText(QCoreApplication.translate("MainWindow", u"Quit", None))
         self.field_strengh_groupBox.setTitle(QCoreApplication.translate("MainWindow", u"Field Strength", None))
         self.cw_label.setText(QCoreApplication.translate("MainWindow", u"CW Field", None))
@@ -543,7 +543,6 @@ class Ui_MainWindow(object):
 
         self.EUT_groupBox.setTitle(QCoreApplication.translate("MainWindow", u"EUT", None))
         self.EUT_plainTextEdit.setPlaceholderText(QCoreApplication.translate("MainWindow", u"Describe the EUT here", None))
-        self.est_time_label.setText(QCoreApplication.translate("MainWindow", u"Estimated Test Time", None))
         self.centralwidget_tabWidget.setTabText(self.centralwidget_tabWidget.indexOf(self.settings_tab), QCoreApplication.translate("MainWindow", u"Settings", None))
         self.centralwidget_tabWidget.setTabText(self.centralwidget_tabWidget.indexOf(self.waveform_tab), QCoreApplication.translate("MainWindow", u"Waveform", None))
         self.save_table_pushButton.setText(QCoreApplication.translate("MainWindow", u"Save", None))

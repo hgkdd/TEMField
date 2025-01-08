@@ -11,9 +11,11 @@ from matplotlib.backends.backend_qtagg import (FigureCanvasQTAgg as FigureCanvas
                                                NavigationToolbar2QT as NavigationToolbar)
 from matplotlib.figure import Figure
 
-from PySide6.QtCore import Qt, QLocale, QSettings, QTimer
+from PySide6.QtCore import Qt, QLocale, QSettings, QTimer, QThreadPool
 from PySide6.QtWidgets import (QApplication, QMainWindow, QMessageBox,
                                QFileDialog, QTableWidgetItem, QVBoxLayout, QWidget)
+
+from EUT import EUT_status, simple_eut_status
 
 # import mpy.device.prb_lumiloop_lsprobe as lumiprb
 from mpy.tools.spacing import logspace, linspace
@@ -31,7 +33,11 @@ from mainwindow import Ui_MainWindow
 class MainWindow(QMainWindow):
     def __init__(self, settings, parent=None):
         super().__init__(parent)
+        self.threadpool = QThreadPool()
+        self.eut_status = "Unknown"
+        self.eut_finished = False
         self.settings = settings
+        self.ready_for_next_freq = True
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
 
@@ -93,6 +99,29 @@ class MainWindow(QMainWindow):
         self.ui.modulation_pushButton.clicked.connect(self.toggle_am)
         self.am_isON = False
 
+    def check_EUT(self):
+        self.eut_finished = False
+        self.eut_status = "Unknown"
+        self.eut_progress = 0
+        self.ready_for_next_freq = False
+        worker = EUT_status(simple_eut_status, dw=self.dwell_time)
+        worker.signals.result.connect(self.EUT_result)
+        worker.signals.finished.connect(self.EUT_finished)
+        worker.signals.progress.connect(self.EUT_progress)
+        self.threadpool.start(worker)
+
+    def EUT_result(self, result):
+        self.eut_status = result
+        #print("EUT result:", result)
+
+    def EUT_progress(self, progress):
+        self.eut_progress = min(100,progress)
+        self.ui.EUT_progressBar.setValue(self.eut_progress)
+
+    def EUT_finished(self):
+        self.eut_finished = True
+        #print("EUT finished")
+
     def _update_efield(self):
         err, t, ex, ey, ez = self.meas.get_waveform()
         # print(err)
@@ -152,12 +181,18 @@ class MainWindow(QMainWindow):
         self.table_is_unsaved = False
 
     def process_frequencies(self):
-        if self.pause_processing:
-            # stay responsive
+        if self.eut_finished:
+            self.do_fill_table(freq=self.current_f, cw=self.e_field[0].get_expectation_value_as_float(), status=self.eut_status)
+            self.eut_finished = False
+            # process next freq
+            self.ready_for_next_freq = True
             QTimer.singleShot(100, self.process_frequencies)
-        else:
+        elif self.pause_processing or not self.ready_for_next_freq:
+            # stay responsive but don't proceed with next freq
+            QTimer.singleShot(100, self.process_frequencies)
+        elif self.ready_for_next_freq:
             try:
-                f = self.remaining_freqs.pop(0)
+                self.current_f = f = self.remaining_freqs.pop(0)
                 Nf = len(self.freqs)
                 Nr = len(self.remaining_freqs)
                 self.ui.test_progressBar.setValue(int((Nf-Nr) / Nf * 100))
@@ -171,9 +206,13 @@ class MainWindow(QMainWindow):
                 self.log(f"E-Field: Ex = {self.e_field[0]}, Ey = {self.e_field[1]}, Ey = {self.e_field[2]},",
                          short = f'Ex = {round(self.e_field[0].get_expectation_value_as_float(),2)} V/m')
                 self.am_on()
-                self.do_fill_table(freq=f, cw=self.e_field[0].get_expectation_value_as_float(), status="passed")
-                # wait and process next freq
-                QTimer.singleShot(self.dwell_time * 1000, self.process_frequencies)
+                self.check_EUT()
+                #self.eut_timer = QTimer()
+                #self.eut_timer.setInterval(10)
+                #self.eut_timer.timeout.connect(self.check_EUT)
+                #self.eut_timer.start()
+                # process next freq
+                QTimer.singleShot(100, self.process_frequencies)
             except IndexError:
                 # all freqs processed
                 self.rf_off()
@@ -181,6 +220,7 @@ class MainWindow(QMainWindow):
                 self.log("all frequencies processed")
                 self.ui.rf_pushButton.setChecked(False)
                 self.ui.start_pause_pushButton.setText("Start Test")
+                self.ready_for_next_freq = True
 
     def toggle_rf(self):
         if self.rf_isON is False:

@@ -47,6 +47,34 @@
          </widget>
         </item>
         <item>
+         <widget class="QLabel" name="est_time_label">
+          <property name="text">
+           <string>Estimated Test Time</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLineEdit" name="est_time_lineEdit">
+          <property name="readOnly">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QProgressBar" name="test_progressBar">
+          <property name="value">
+           <number>0</number>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QProgressBar" name="EUT_progressBar">
+          <property name="value">
+           <number>0</number>
+          </property>
+         </widget>
+        </item>
+        <item>
          <spacer name="main_buttons_horizontalSpacer">
           <property name="orientation">
            <enum>Qt::Orientation::Horizontal</enum>
@@ -474,33 +502,6 @@
             </layout>
            </widget>
           </item>
-          <item>
-           <widget class="QWidget" name="est_time_widget" native="true">
-            <layout class="QHBoxLayout" name="horizontalLayout">
-             <item>
-              <widget class="QLabel" name="est_time_label">
-               <property name="text">
-                <string>Estimated Test Time</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QLineEdit" name="est_time_lineEdit">
-               <property name="readOnly">
-                <bool>true</bool>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QProgressBar" name="test_progressBar">
-               <property name="value">
-                <number>0</number>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </widget>
-          </item>
          </layout>
         </widget>
         <widget class="QWidget" name="waveform_tab">
@@ -518,8 +519,8 @@
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>831</width>
-               <height>488</height>
+               <width>1027</width>
+               <height>538</height>
               </rect>
              </property>
             </widget>
@@ -621,7 +622,7 @@
      <x>0</x>
      <y>0</y>
      <width>1073</width>
-     <height>37</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
