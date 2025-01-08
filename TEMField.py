@@ -156,19 +156,19 @@ class MainWindow(QMainWindow):
         self.ui.logtab_log_plainTextEdit.appendPlainText(longtext)
         self.ui.permanent_log_plainTextEdit.appendPlainText(short)
 
-    def do_fill_table(self, freq=None, cw=None, status=None):
+    def do_fill_table(self, freq, cw, status):
         self.table_is_unsaved = True
         table = self.ui.table_tableWidget
         rowposition = table.rowCount()
         table.insertRow(rowposition)
         val = QTableWidgetItem(self.get_time_as_string())
-        val.setFlags(val.flags() & ~Qt.ItemIsEditable)
+        val.setFlags(val.flags() & ~Qt.ItemFlag.ItemIsEditable)
         table.setItem(rowposition, 0, val)
         val = QTableWidgetItem(str(freq*1e-6))
-        val.setFlags(val.flags() & ~Qt.ItemIsEditable)
+        val.setFlags(val.flags() & ~Qt.ItemFlag.ItemIsEditable)
         table.setItem(rowposition, 1, val)
         val = QTableWidgetItem(str(round(cw,2)))
-        val.setFlags(val.flags() & ~Qt.ItemIsEditable)
+        val.setFlags(val.flags() & ~Qt.ItemFlag.ItemIsEditable)
         table.setItem(rowposition, 2, val)
         table.setItem(rowposition, 3, QTableWidgetItem(str(status)))
 
@@ -266,8 +266,10 @@ class MainWindow(QMainWindow):
         if self.ui.start_pause_pushButton.text() == "Start Test":
             if self.table_is_unsaved:
                 ret = QMessageBox.question(self, "Unsaved Table detected",
-                                              "Do you want to save the table?", QMessageBox.No, QMessageBox.Yes)
-                if ret == QMessageBox.Yes:
+                                              "Do you want to save the table?",
+                                           QMessageBox.StandardButton.No,
+                                           QMessageBox.StandardButton.Yes)
+                if ret == QMessageBox.StandardButton.Yes:
                     self.save_Table()
 
             self.clear_Table()
@@ -330,12 +332,14 @@ class MainWindow(QMainWindow):
         self.log("close event")
         ret = QMessageBox.question(self, "TEMField",
                                        "Do you want to exit the application?",
-                                           QMessageBox.Yes, QMessageBox.No)
-        if ret == QMessageBox.Yes:
+                                           QMessageBox.StandardButton.Yes,
+                                   QMessageBox.StandardButton.No)
+        if ret == QMessageBox.StandardButton.Yes:
             if self.table_is_unsaved:
                 ret = QMessageBox.question(self, "Table is unsaved",
-                                              "Do you want to save the table?", QMessageBox.No, QMessageBox.Yes)
-                if ret == QMessageBox.Yes:
+                                              "Do you want to save the table?",
+                                           QMessageBox.StandardButton.No, QMessageBox.StandardButton.Yes)
+                if ret == QMessageBox.StandardButton.Yes:
                     self.save_Table()
             self._save_setup()
             self.meas.quit_measurement()
@@ -397,7 +401,7 @@ class MainWindow(QMainWindow):
         if self.disable_update:
             return
         # print("update")
-        self.log_sweep = True if self.ui.log_sweep_checkBox.checkState() == Qt.Checked else False
+        self.log_sweep = True if self.ui.log_sweep_checkBox.checkState() == Qt.CheckState.Checked else False
         # print("update", self.log_sweep)
         if not self.log_sweep:
             self.ui.freq_step_doubleSpinBox.setSuffix(' MHz')
@@ -426,8 +430,9 @@ class MainWindow(QMainWindow):
     def get_time_as_string(self, format=None):
         if format is None:
             tstr = tstamp()   # default format from Mpy
-        elif format == '':
-            format = "%Y-%m-%dT%H:%M:%S.%f%z"
+        else:
+            if format == '':
+                format = "%Y-%m-%dT%H:%M:%S.%f%z"
             tz = datetime.datetime.now(datetime.timezone.utc).astimezone().tzinfo
             tstr = datetime.datetime.now(tz=tz).strftime(format)
         return tstr
@@ -467,7 +472,7 @@ if __name__ == "__main__":
     app.setApplicationName("TEMField")
     settings = QSettings()
 
-    QLocale.setDefault(QLocale.English)
+    QLocale.setDefault(QLocale.Language.English)
 
     widget = MainWindow(settings)
     widget.show()

@@ -1,4 +1,4 @@
-from PySide6.QtCore import QTimer, QRunnable, Slot, Signal, QObject, QThreadPool
+from PySide6.QtCore import QRunnable, Slot, Signal, QObject
 
 import sys
 import time
