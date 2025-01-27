@@ -10,7 +10,7 @@ def simple_eut_status(progress_callback, dw=1):
     start = now = time.time()
     end = start + dw
     while now < end:
-        time.sleep(0.1)
+        time.sleep(0.01)
         now = time.time()
         percentage = round((now - start)/dw, 2) * 100
         progress_callback.emit(percentage)

@@ -79,13 +79,14 @@ class MainWindow(QMainWindow):
         self.ui.waveform_scrollArea.setWidget(widget)
         self._efield_ax = self.efield_canvas.figure.subplots()
         t = np.linspace(0, 10, 101)
-        self.lineEx, = self._efield_ax.plot(t, np.sin(t + time.time()), marker=',')
-        self.lineEy, = self._efield_ax.plot(t, np.sin(t + time.time()*2), marker=',')
-        self.lineEz, = self._efield_ax.plot(t, np.sin(t + time.time()*3), marker=',')
-        self.lineSin, = self._efield_ax.plot(t, np.sin(t + time.time()), ls='-')
+        self.lineEx, = self._efield_ax.plot(t, np.sin(t + time.time()), marker=',', label='Ex')
+        self.lineEy, = self._efield_ax.plot(t, np.sin(t + time.time()*2), marker=',', label='Ey')
+        self.lineEz, = self._efield_ax.plot(t, np.sin(t + time.time()*3), marker=',', label='Ez')
+        self.lineSin, = self._efield_ax.plot(t, np.sin(t + time.time()), ls='-', label='sin-fit (Ex)')
         self._efield_ax.set_xlabel("Time in ms")
         self._efield_ax.set_ylabel("E-Field in V/m")
         self._efield_ax.set_title("Dummy Plot")
+        self._efield_ax.legend(loc='upper right')
         self._efield_ax.grid(True)
         # Set up a Line2D.
         self._timer = self.efield_canvas.new_timer(50)
@@ -152,7 +153,7 @@ class MainWindow(QMainWindow):
     def log(self, text, short = None):
         if short is None:
             short = text
-        longtext = f"{self.get_time_as_string()}: {text}"
+        longtext = f"{self.get_time_as_string(format='')}: {text}"
         self.ui.logtab_log_plainTextEdit.appendPlainText(longtext)
         self.ui.permanent_log_plainTextEdit.appendPlainText(short)
 
@@ -161,14 +162,14 @@ class MainWindow(QMainWindow):
         table = self.ui.table_tableWidget
         rowposition = table.rowCount()
         table.insertRow(rowposition)
-        val = QTableWidgetItem(self.get_time_as_string())
-        val.setFlags(val.flags() & ~Qt.ItemIsEditable)
+        val = QTableWidgetItem(self.get_time_as_string(format=''))
+        val.setFlags(val.flags() & ~Qt.ItemFlag.ItemIsEditable)
         table.setItem(rowposition, 0, val)
         val = QTableWidgetItem(str(freq*1e-6))
-        val.setFlags(val.flags() & ~Qt.ItemIsEditable)
+        val.setFlags(val.flags() & ~Qt.ItemFlag.ItemIsEditable)
         table.setItem(rowposition, 1, val)
         val = QTableWidgetItem(str(round(cw,2)))
-        val.setFlags(val.flags() & ~Qt.ItemIsEditable)
+        val.setFlags(val.flags() & ~Qt.ItemFlag.ItemIsEditable)
         table.setItem(rowposition, 2, val)
         table.setItem(rowposition, 3, QTableWidgetItem(str(status)))
 
@@ -192,6 +193,7 @@ class MainWindow(QMainWindow):
             QTimer.singleShot(100, self.process_frequencies)
         elif self.ready_for_next_freq:
             try:
+                self.table_is_unsaved = True
                 self.current_f = f = self.remaining_freqs.pop(0)
                 Nf = len(self.freqs)
                 Nr = len(self.remaining_freqs)
@@ -217,6 +219,7 @@ class MainWindow(QMainWindow):
                 # all freqs processed
                 self.rf_off()
                 self.am_off()
+                self.meas.mg.CmdDevices(False, 'Standby')
                 self.log("all frequencies processed")
                 self.ui.rf_pushButton.setChecked(False)
                 self.ui.start_pause_pushButton.setText("Start Test")
@@ -266,8 +269,9 @@ class MainWindow(QMainWindow):
         if self.ui.start_pause_pushButton.text() == "Start Test":
             if self.table_is_unsaved:
                 ret = QMessageBox.question(self, "Unsaved Table detected",
-                                              "Do you want to save the table?", QMessageBox.No, QMessageBox.Yes)
-                if ret == QMessageBox.Yes:
+                                              "Do you want to save the table?", QMessageBox.StandardButton.No,
+                                           QMessageBox.StandardButton.Yes)
+                if ret == QMessageBox.StandardButton.Yes:
                     self.save_Table()
 
             self.clear_Table()
@@ -286,11 +290,13 @@ class MainWindow(QMainWindow):
             self.ui.rf_pushButton.setChecked(True)
             self.process_frequencies()
         elif self.ui.start_pause_pushButton.text() == "Pause Test":
+            self.rf_off()
             self.log("Pause Test")
             self.ui.start_pause_pushButton.setText("Cont. Test")
             self.ui.rf_pushButton.setChecked(False)
             self.pause_processing = True
         else:
+            self.rf_on()
             self.log("Continue Test")
             self.ui.start_pause_pushButton.setText("Pause Test")
             self.ui.rf_pushButton.setChecked(True)
@@ -330,12 +336,13 @@ class MainWindow(QMainWindow):
         self.log("close event")
         ret = QMessageBox.question(self, "TEMField",
                                        "Do you want to exit the application?",
-                                           QMessageBox.Yes, QMessageBox.No)
-        if ret == QMessageBox.Yes:
+                                           QMessageBox.StandardButton.Yes, QMessageBox.StandardButton.No)
+        if ret == QMessageBox.StandardButton.Yes:
             if self.table_is_unsaved:
                 ret = QMessageBox.question(self, "Table is unsaved",
-                                              "Do you want to save the table?", QMessageBox.No, QMessageBox.Yes)
-                if ret == QMessageBox.Yes:
+                                              "Do you want to save the table?", QMessageBox.StandardButton.No,
+                                           QMessageBox.StandardButton.Yes)
+                if ret == QMessageBox.StandardButton.Yes:
                     self.save_Table()
             self._save_setup()
             self.meas.quit_measurement()
@@ -397,7 +404,7 @@ class MainWindow(QMainWindow):
         if self.disable_update:
             return
         # print("update")
-        self.log_sweep = True if self.ui.log_sweep_checkBox.checkState() == Qt.Checked else False
+        self.log_sweep = True if self.ui.log_sweep_checkBox.checkState() == Qt.CheckState.Checked else False
         # print("update", self.log_sweep)
         if not self.log_sweep:
             self.ui.freq_step_doubleSpinBox.setSuffix(' MHz')
@@ -420,8 +427,8 @@ class MainWindow(QMainWindow):
         self.ui.freqs_plainTextEdit.setPlainText('\n'.join(map(str, self.freqs)))
 
         self.dwell_time = self.ui.dwell_time_doubleSpinBox.value()
-        time_s = self.dwell_time*len(self.freqs)
-        self.ui.est_time_lineEdit.setText(' '+str(datetime.timedelta(seconds=time_s))+' (hh:mm:ss)')
+        time_s = (self.dwell_time + 0.9) * len(self.freqs)  # 0.9 s offset per freq
+        self.ui.est_time_lineEdit.setText(' '+str(datetime.timedelta(seconds=round(time_s,0)))+' (hh:mm:ss)')
 
     def get_time_as_string(self, format=None):
         if format is None:
@@ -440,7 +447,7 @@ class MainWindow(QMainWindow):
             header = [self.ui.table_tableWidget.horizontalHeaderItem(column).text()
                       for column in columns]
             with open(path, 'w') as csvfile:
-                t = self.get_time_as_string()
+                t = self.get_time_as_string(format='')
                 csvfile.write(f"# File saved: {t}\n#\n")
                 csvfile.write('# EUT Description\n')
                 plaintext_EUT = self.eut_description
@@ -454,6 +461,7 @@ class MainWindow(QMainWindow):
                     writer.writerow(
                         self.ui.table_tableWidget.item(row, column).text()
                         for column in columns)
+                self.table_is_unsaved = False
 
 
 if __name__ == "__main__":
@@ -467,7 +475,7 @@ if __name__ == "__main__":
     app.setApplicationName("TEMField")
     settings = QSettings()
 
-    QLocale.setDefault(QLocale.English)
+    QLocale.setDefault(QLocale.Language.English)
 
     widget = MainWindow(settings)
     widget.show()
