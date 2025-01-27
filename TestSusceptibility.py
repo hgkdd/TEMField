@@ -1,5 +1,4 @@
 import os
-import time
 
 from scuq import si,quantities
 from mpy.tools import util, mgraph
