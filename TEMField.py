@@ -14,9 +14,11 @@ from matplotlib.figure import Figure
 from PySide6.QtCore import Qt, QLocale, QSettings, QTimer, QThreadPool
 from PySide6.QtWidgets import (QApplication, QMainWindow, QMessageBox,
                                QFileDialog, QTableWidgetItem, QVBoxLayout, QWidget)
+from scipy.sparse import eye_array
+from traits.trait_types import self
 
 from EUT import EUT_status, simple_eut_status
-from build.lib.mpy.device.switch import switch
+from mpy.device.switch import switch
 
 # import mpy.device.prb_lumiloop_lsprobe as lumiprb
 from mpy.tools.spacing import logspace, linspace
@@ -46,6 +48,16 @@ class MainWindow(QMainWindow):
         self.disable_update = True
         self._read_setup()
         self.disable_update = False
+
+        def _adjust(x):
+            self.adjust_to_setting = x
+        # register adjust radio buttons
+        self.ui.radioButton_Ex.clicked.connect(lambda: _adjust('x'))
+        self.ui.radioButton_Ey.clicked.connect(lambda: _adjust('y'))
+        self.ui.radioButton_Ez.clicked.connect(lambda: _adjust('z'))
+        self.ui.radioButton_absE.clicked.connect(lambda: _adjust('mag'))
+        self.ui.radioButton_Largest_E.clicked.connect(lambda: _adjust('largest'))
+        self.ui.radioButton_Auto.clicked.connect(lambda: _adjust('auto'))
 
         # register message box for quit action
         self.ui.actionQuit.triggered.connect(MainWindow.close)
@@ -138,7 +150,20 @@ class MainWindow(QMainWindow):
             self.lineEx.set_data(t, ex)
             self.lineEy.set_data(t, ey)
             self.lineEz.set_data(t, ez)
-            fitdata = fit_sin(t, ex)
+            if self.adjust_to_setting == 'x' or self.meas.main_e_component == 0:
+                _e = ex
+            elif self.adjust_to_setting == 'y' or self.meas.main_e_component == 1:
+                _e = ey
+            elif self.adjust_to_setting == 'z' or self.meas.main_e_component == 2:
+                _e = ez
+            elif self.adjust_to_setting == 'mag':
+                _e = np.sqrt(np.square(ex) + np.square(ey) + np.square(ez))
+            elif self.adjust_to_setting == 'largest':
+                max_vals = (max(ex), max(ey), max(ez))
+                _i = max_vals.index(max(max_vals))
+                _e = (ex, ey, ez)[_i]
+
+            fitdata = fit_sin(t, _e)
             freqAM = fitdata['freq']
             meanAM = fitdata['offset']
             modAM = abs(fitdata['amp']) / meanAM * 100
@@ -227,6 +252,7 @@ class MainWindow(QMainWindow):
                 self.rf_off()
                 self.am_off()
                 self.meas.mg.CmdDevices(False, 'Standby')
+                self.meas.mg.Quit_Devices()
                 self.log("all frequencies processed")
                 self.ui.rf_pushButton.setChecked(False)
                 self.ui.start_pause_pushButton.setText("Start Test")
@@ -291,7 +317,8 @@ class MainWindow(QMainWindow):
                     e_target=self.cw,
                     names=self.names,
                     dotfile=self.dotfile,
-                    SearchPath=self.searchpath)
+                    SearchPath=self.searchpath,
+                    adjust_to_setting=self.adjust_to_setting)
             self.meas.init_measurement(self.am)
             self.remaining_freqs = self.freqs.copy()
             self.ui.rf_pushButton.setChecked(True)

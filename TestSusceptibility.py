@@ -33,6 +33,8 @@ class TestSusceptibiliy(Measure):
 
         if adjust_to_setting == None:
             self.adjust_to_setting = 'auto'
+        else:
+            self.adjust_to_setting = adjust_to_setting
 
         self.main_e_component = None
 
@@ -46,7 +48,7 @@ class TestSusceptibiliy(Measure):
             elif self.adjust_to_setting == 'largest':
                 return max(data)
             elif self.adjust_to_setting == 'mag':
-                return np.sqrt((_d*_d for _d in data))
+                return np.linalg.norm(data)
             else:   # auto
                 if self.main_e_component in (0,1,2):
                     return data[self.main_e_component]

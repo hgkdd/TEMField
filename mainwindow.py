@@ -387,7 +387,7 @@ class Ui_MainWindow(object):
         self.waveform_scrollArea.setWidgetResizable(True)
         self.waveform_scrollAreaWidgetContents = QWidget()
         self.waveform_scrollAreaWidgetContents.setObjectName(u"waveform_scrollAreaWidgetContents")
-        self.waveform_scrollAreaWidgetContents.setGeometry(QRect(0, 0, 999, 528))
+        self.waveform_scrollAreaWidgetContents.setGeometry(QRect(0, 0, 98, 28))
         self.waveform_scrollArea.setWidget(self.waveform_scrollAreaWidgetContents)
 
         self.gridLayout_7.addWidget(self.waveform_scrollArea, 0, 0, 1, 1)
@@ -465,7 +465,7 @@ class Ui_MainWindow(object):
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QMenuBar(MainWindow)
         self.menubar.setObjectName(u"menubar")
-        self.menubar.setGeometry(QRect(0, 0, 1073, 24))
+        self.menubar.setGeometry(QRect(0, 0, 1073, 22))
         self.menuFile = QMenu(self.menubar)
         self.menuFile.setObjectName(u"menuFile")
         MainWindow.setMenuBar(self.menubar)
@@ -521,7 +521,7 @@ class Ui_MainWindow(object):
         self.freq_step_doubleSpinBox.valueChanged.connect(MainWindow.update)
         self.dwell_time_doubleSpinBox.valueChanged.connect(MainWindow.update)
 
-        self.centralwidget_tabWidget.setCurrentIndex(2)
+        self.centralwidget_tabWidget.setCurrentIndex(0)
 
 
         QMetaObject.connectSlotsByName(MainWindow)
