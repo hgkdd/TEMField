@@ -109,7 +109,7 @@
       <item row="0" column="0">
        <widget class="QTabWidget" name="centralwidget_tabWidget">
         <property name="currentIndex">
-         <number>0</number>
+         <number>2</number>
         </property>
         <widget class="QWidget" name="settings_tab">
          <attribute name="title">
@@ -133,6 +133,16 @@
                    </property>
                    <property name="buddy">
                     <cstring>cw_doubleSpinBox</cstring>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="0" column="1">
+                  <widget class="QDoubleSpinBox" name="cw_doubleSpinBox">
+                   <property name="suffix">
+                    <string> V/m</string>
+                   </property>
+                   <property name="value">
+                    <double>1.000000000000000</double>
                    </property>
                   </widget>
                  </item>
@@ -162,16 +172,6 @@
                    </property>
                   </widget>
                  </item>
-                 <item row="0" column="1">
-                  <widget class="QDoubleSpinBox" name="cw_doubleSpinBox">
-                   <property name="suffix">
-                    <string> V/m</string>
-                   </property>
-                   <property name="value">
-                    <double>1.000000000000000</double>
-                   </property>
-                  </widget>
-                 </item>
                  <item row="2" column="0">
                   <widget class="QLabel" name="dwell_time_label">
                    <property name="text">
@@ -196,6 +196,70 @@
                    <property name="value">
                     <double>1.000000000000000</double>
                    </property>
+                  </widget>
+                 </item>
+                 <item row="3" column="0">
+                  <widget class="QLabel" name="label_adjust">
+                   <property name="text">
+                    <string>Adjust to</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="3" column="1">
+                  <widget class="QGroupBox" name="groupBox_E_component">
+                   <property name="title">
+                    <string/>
+                   </property>
+                   <layout class="QVBoxLayout" name="verticalLayout_3">
+                    <item>
+                     <widget class="QRadioButton" name="radioButton_Ex">
+                      <property name="text">
+                       <string>Ex</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <widget class="QRadioButton" name="radioButton_Ey">
+                      <property name="text">
+                       <string>Ey</string>
+                      </property>
+                      <property name="checked">
+                       <bool>false</bool>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <widget class="QRadioButton" name="radioButton_Ez">
+                      <property name="text">
+                       <string>Ez</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <widget class="QRadioButton" name="radioButton_absE">
+                      <property name="text">
+                       <string>|E|</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <widget class="QRadioButton" name="radioButton_Largest_E">
+                      <property name="text">
+                       <string>Largest</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <widget class="QRadioButton" name="radioButton_Auto">
+                      <property name="text">
+                       <string>Auto</string>
+                      </property>
+                      <property name="checked">
+                       <bool>true</bool>
+                      </property>
+                     </widget>
+                    </item>
+                   </layout>
                   </widget>
                  </item>
                 </layout>
@@ -519,8 +583,8 @@
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>1027</width>
-               <height>538</height>
+               <width>999</width>
+               <height>528</height>
               </rect>
              </property>
             </widget>
@@ -582,7 +646,22 @@
               </column>
               <column>
                <property name="text">
-                <string>CW E-Field [V/m]</string>
+                <string>CW Ex [V/m]</string>
+               </property>
+              </column>
+              <column>
+               <property name="text">
+                <string>CW Ey [V/m]</string>
+               </property>
+              </column>
+              <column>
+               <property name="text">
+                <string>CW Ez [V/m]</string>
+               </property>
+              </column>
+              <column>
+               <property name="text">
+                <string>CW |E| [V/m]</string>
                </property>
               </column>
               <column>
@@ -622,7 +701,7 @@
      <x>0</x>
      <y>0</y>
      <width>1073</width>
-     <height>22</height>
+     <height>24</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">

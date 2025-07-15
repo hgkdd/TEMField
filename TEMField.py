@@ -16,6 +16,7 @@ from PySide6.QtWidgets import (QApplication, QMainWindow, QMessageBox,
                                QFileDialog, QTableWidgetItem, QVBoxLayout, QWidget)
 
 from EUT import EUT_status, simple_eut_status
+from build.lib.mpy.device.switch import switch
 
 # import mpy.device.prb_lumiloop_lsprobe as lumiprb
 from mpy.tools.spacing import logspace, linspace
@@ -157,7 +158,7 @@ class MainWindow(QMainWindow):
         self.ui.logtab_log_plainTextEdit.appendPlainText(longtext)
         self.ui.permanent_log_plainTextEdit.appendPlainText(short)
 
-    def do_fill_table(self, freq=None, cw=None, status=None):
+    def do_fill_table(self, freq=None, cw=(None,None,None), status=None):
         self.table_is_unsaved = True
         table = self.ui.table_tableWidget
         rowposition = table.rowCount()
@@ -168,11 +169,17 @@ class MainWindow(QMainWindow):
         val = QTableWidgetItem(str(freq*1e-6))
         val.setFlags(val.flags() & ~Qt.ItemFlag.ItemIsEditable)
         table.setItem(rowposition, 1, val)
-        val = QTableWidgetItem(str(round(cw,2)))
+        magnitude = 0.0
+        for _r,_cw in enumerate(cw):
+            val = QTableWidgetItem(str(round(_cw,2)))
+            val.setFlags(val.flags() & ~Qt.ItemFlag.ItemIsEditable)
+            table.setItem(rowposition, 2+_r, val)
+            magnitude += _cw*_cw
+        magnitude = np.sqrt(magnitude)
+        val = QTableWidgetItem(str(round(magnitude, 2)))
         val.setFlags(val.flags() & ~Qt.ItemFlag.ItemIsEditable)
-        table.setItem(rowposition, 2, val)
-        table.setItem(rowposition, 3, QTableWidgetItem(str(status)))
-
+        table.setItem(rowposition, 5, val)
+        table.setItem(rowposition, 6, QTableWidgetItem(str(status)))
         table.verticalScrollBar().setSliderPosition(table.verticalScrollBar().maximum())
 
     def clear_Table(self):
@@ -183,7 +190,7 @@ class MainWindow(QMainWindow):
 
     def process_frequencies(self):
         if self.eut_finished:
-            self.do_fill_table(freq=self.current_f, cw=self.e_field[0].get_expectation_value_as_float(), status=self.eut_status)
+            self.do_fill_table(freq=self.current_f, cw=(_e.get_expectation_value_as_float() for _e in self.e_field), status=self.eut_status)
             self.eut_finished = False
             # process next freq
             self.ready_for_next_freq = True
@@ -205,8 +212,8 @@ class MainWindow(QMainWindow):
                 self.rf_on()
                 self.log('adjust Level...')
                 self.e_field = self.meas.adjust_level()
-                self.log(f"E-Field: Ex = {self.e_field[0]}, Ey = {self.e_field[1]}, Ey = {self.e_field[2]},",
-                         short = f'Ex = {round(self.e_field[0].get_expectation_value_as_float(),2)} V/m')
+                self.log(f"E-Field: Ex = {self.e_field[0]}, Ey = {self.e_field[1]}, Ez = {self.e_field[2]},",
+                         short = f'Ex = {round(self.e_field[0].get_expectation_value_as_float(),2)} V/m, Ey = {round(self.e_field[1].get_expectation_value_as_float(),2)} V/m, Ez = {round(self.e_field[2].get_expectation_value_as_float(),2)} V/m')
                 self.am_on()
                 self.check_EUT()
                 #self.eut_timer = QTimer()
@@ -368,6 +375,7 @@ class MainWindow(QMainWindow):
         self.eut_description = self.settings.value("settings/eut-description", '')
         self.table_save_dir = self.settings.value("settings/table-save-dir", '.')
         self.table_save_dir = os.path.abspath(self.table_save_dir)
+        self.adjust_to_setting = self.settings.value("settings/adjust_to_setting", 'auto')   # 'x', 'y', 'z', 'mag', 'largest', 'auto'
         # print("Init: ", self.log_sweep)
         # print(type(self.log_sweep), self.log_sweep)
         self.ui.log_sweep_checkBox.setChecked(self.log_sweep)
@@ -382,6 +390,20 @@ class MainWindow(QMainWindow):
         for row,key in enumerate(['sg', 'a1', 'a2', 'tem', 'fp']):
             self.ui.node_names_tableWidget.setItem(row, 1, QTableWidgetItem(self.names[key]))
         self.ui.EUT_plainTextEdit.setPlainText(self.eut_description)
+        if self.adjust_to_setting == 'auto':
+                self.ui.radioButton_Auto.setChecked(True)
+        elif self.adjust_to_setting == 'x':
+                self.ui.radioButton_Ex.setChecked(True)
+        elif self.adjust_to_setting == 'y':
+                self.ui.radioButton_Ey.setChecked(True)
+        elif self.adjust_to_setting == 'z':
+                self.ui.radioButton_Ez.setChecked(True)
+        elif self.adjust_to_setting == 'mag':
+                self.ui.radioButton_absE.setChecked(True)
+        elif self.adjust_to_setting == 'largest':
+                self.ui.radioButton_Largest_E.setChecked(True)
+
+
 
     def _save_setup(self):
         self.log("save setup")
@@ -397,6 +419,7 @@ class MainWindow(QMainWindow):
         self.settings.setValue("settings/names", self.names)
         self.settings.setValue("settings/eut-description", self.eut_description)
         self.settings.setValue("settings/table-save-dir", self.table_save_dir)
+        self.settings.setValue("settings/adjust_to_setting", self.adjust_to_setting)
         # print("Exit: ", self.log_sweep)
         self.settings.sync()
 

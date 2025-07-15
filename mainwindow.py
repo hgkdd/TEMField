@@ -20,9 +20,9 @@ from PySide6.QtWidgets import (QAbstractItemView, QApplication, QCheckBox, QDoub
     QFormLayout, QGridLayout, QGroupBox, QHBoxLayout,
     QHeaderView, QLabel, QLineEdit, QMainWindow,
     QMenu, QMenuBar, QPlainTextEdit, QProgressBar,
-    QPushButton, QScrollArea, QSizePolicy, QSpacerItem,
-    QSpinBox, QStatusBar, QTabWidget, QTableWidget,
-    QTableWidgetItem, QVBoxLayout, QWidget)
+    QPushButton, QRadioButton, QScrollArea, QSizePolicy,
+    QSpacerItem, QSpinBox, QStatusBar, QTabWidget,
+    QTableWidget, QTableWidgetItem, QVBoxLayout, QWidget)
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -124,6 +124,12 @@ class Ui_MainWindow(object):
 
         self.field_strength_formLayout.setWidget(0, QFormLayout.LabelRole, self.cw_label)
 
+        self.cw_doubleSpinBox = QDoubleSpinBox(self.field_strengh_groupBox)
+        self.cw_doubleSpinBox.setObjectName(u"cw_doubleSpinBox")
+        self.cw_doubleSpinBox.setValue(1.000000000000000)
+
+        self.field_strength_formLayout.setWidget(0, QFormLayout.FieldRole, self.cw_doubleSpinBox)
+
         self.am_label = QLabel(self.field_strengh_groupBox)
         self.am_label.setObjectName(u"am_label")
 
@@ -137,12 +143,6 @@ class Ui_MainWindow(object):
 
         self.field_strength_formLayout.setWidget(1, QFormLayout.FieldRole, self.am_spinBox)
 
-        self.cw_doubleSpinBox = QDoubleSpinBox(self.field_strengh_groupBox)
-        self.cw_doubleSpinBox.setObjectName(u"cw_doubleSpinBox")
-        self.cw_doubleSpinBox.setValue(1.000000000000000)
-
-        self.field_strength_formLayout.setWidget(0, QFormLayout.FieldRole, self.cw_doubleSpinBox)
-
         self.dwell_time_label = QLabel(self.field_strengh_groupBox)
         self.dwell_time_label.setObjectName(u"dwell_time_label")
 
@@ -155,6 +155,50 @@ class Ui_MainWindow(object):
         self.dwell_time_doubleSpinBox.setValue(1.000000000000000)
 
         self.field_strength_formLayout.setWidget(2, QFormLayout.FieldRole, self.dwell_time_doubleSpinBox)
+
+        self.label_adjust = QLabel(self.field_strengh_groupBox)
+        self.label_adjust.setObjectName(u"label_adjust")
+
+        self.field_strength_formLayout.setWidget(3, QFormLayout.LabelRole, self.label_adjust)
+
+        self.groupBox_E_component = QGroupBox(self.field_strengh_groupBox)
+        self.groupBox_E_component.setObjectName(u"groupBox_E_component")
+        self.verticalLayout_3 = QVBoxLayout(self.groupBox_E_component)
+        self.verticalLayout_3.setObjectName(u"verticalLayout_3")
+        self.radioButton_Ex = QRadioButton(self.groupBox_E_component)
+        self.radioButton_Ex.setObjectName(u"radioButton_Ex")
+
+        self.verticalLayout_3.addWidget(self.radioButton_Ex)
+
+        self.radioButton_Ey = QRadioButton(self.groupBox_E_component)
+        self.radioButton_Ey.setObjectName(u"radioButton_Ey")
+        self.radioButton_Ey.setChecked(False)
+
+        self.verticalLayout_3.addWidget(self.radioButton_Ey)
+
+        self.radioButton_Ez = QRadioButton(self.groupBox_E_component)
+        self.radioButton_Ez.setObjectName(u"radioButton_Ez")
+
+        self.verticalLayout_3.addWidget(self.radioButton_Ez)
+
+        self.radioButton_absE = QRadioButton(self.groupBox_E_component)
+        self.radioButton_absE.setObjectName(u"radioButton_absE")
+
+        self.verticalLayout_3.addWidget(self.radioButton_absE)
+
+        self.radioButton_Largest_E = QRadioButton(self.groupBox_E_component)
+        self.radioButton_Largest_E.setObjectName(u"radioButton_Largest_E")
+
+        self.verticalLayout_3.addWidget(self.radioButton_Largest_E)
+
+        self.radioButton_Auto = QRadioButton(self.groupBox_E_component)
+        self.radioButton_Auto.setObjectName(u"radioButton_Auto")
+        self.radioButton_Auto.setChecked(True)
+
+        self.verticalLayout_3.addWidget(self.radioButton_Auto)
+
+
+        self.field_strength_formLayout.setWidget(3, QFormLayout.FieldRole, self.groupBox_E_component)
 
 
         self.gridLayout_3.addLayout(self.field_strength_formLayout, 0, 0, 1, 1)
@@ -343,7 +387,7 @@ class Ui_MainWindow(object):
         self.waveform_scrollArea.setWidgetResizable(True)
         self.waveform_scrollAreaWidgetContents = QWidget()
         self.waveform_scrollAreaWidgetContents.setObjectName(u"waveform_scrollAreaWidgetContents")
-        self.waveform_scrollAreaWidgetContents.setGeometry(QRect(0, 0, 1027, 538))
+        self.waveform_scrollAreaWidgetContents.setGeometry(QRect(0, 0, 999, 528))
         self.waveform_scrollArea.setWidget(self.waveform_scrollAreaWidgetContents)
 
         self.gridLayout_7.addWidget(self.waveform_scrollArea, 0, 0, 1, 1)
@@ -377,8 +421,8 @@ class Ui_MainWindow(object):
         self.gridLayout_8.addWidget(self.widget, 0, 1, 1, 1)
 
         self.table_tableWidget = QTableWidget(self.table_tab)
-        if (self.table_tableWidget.columnCount() < 4):
-            self.table_tableWidget.setColumnCount(4)
+        if (self.table_tableWidget.columnCount() < 7):
+            self.table_tableWidget.setColumnCount(7)
         __qtablewidgetitem12 = QTableWidgetItem()
         self.table_tableWidget.setHorizontalHeaderItem(0, __qtablewidgetitem12)
         __qtablewidgetitem13 = QTableWidgetItem()
@@ -387,6 +431,12 @@ class Ui_MainWindow(object):
         self.table_tableWidget.setHorizontalHeaderItem(2, __qtablewidgetitem14)
         __qtablewidgetitem15 = QTableWidgetItem()
         self.table_tableWidget.setHorizontalHeaderItem(3, __qtablewidgetitem15)
+        __qtablewidgetitem16 = QTableWidgetItem()
+        self.table_tableWidget.setHorizontalHeaderItem(4, __qtablewidgetitem16)
+        __qtablewidgetitem17 = QTableWidgetItem()
+        self.table_tableWidget.setHorizontalHeaderItem(5, __qtablewidgetitem17)
+        __qtablewidgetitem18 = QTableWidgetItem()
+        self.table_tableWidget.setHorizontalHeaderItem(6, __qtablewidgetitem18)
         self.table_tableWidget.setObjectName(u"table_tableWidget")
 
         self.gridLayout_8.addWidget(self.table_tableWidget, 0, 0, 1, 1)
@@ -415,7 +465,7 @@ class Ui_MainWindow(object):
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QMenuBar(MainWindow)
         self.menubar.setObjectName(u"menubar")
-        self.menubar.setGeometry(QRect(0, 0, 1073, 22))
+        self.menubar.setGeometry(QRect(0, 0, 1073, 24))
         self.menuFile = QMenu(self.menubar)
         self.menuFile.setObjectName(u"menuFile")
         MainWindow.setMenuBar(self.menubar)
@@ -471,7 +521,7 @@ class Ui_MainWindow(object):
         self.freq_step_doubleSpinBox.valueChanged.connect(MainWindow.update)
         self.dwell_time_doubleSpinBox.valueChanged.connect(MainWindow.update)
 
-        self.centralwidget_tabWidget.setCurrentIndex(0)
+        self.centralwidget_tabWidget.setCurrentIndex(2)
 
 
         QMetaObject.connectSlotsByName(MainWindow)
@@ -492,11 +542,19 @@ class Ui_MainWindow(object):
         self.quit_pushButton.setText(QCoreApplication.translate("MainWindow", u"Quit", None))
         self.field_strengh_groupBox.setTitle(QCoreApplication.translate("MainWindow", u"Field Strength", None))
         self.cw_label.setText(QCoreApplication.translate("MainWindow", u"CW Field", None))
+        self.cw_doubleSpinBox.setSuffix(QCoreApplication.translate("MainWindow", u" V/m", None))
         self.am_label.setText(QCoreApplication.translate("MainWindow", u"AM", None))
         self.am_spinBox.setSuffix(QCoreApplication.translate("MainWindow", u"%", None))
-        self.cw_doubleSpinBox.setSuffix(QCoreApplication.translate("MainWindow", u" V/m", None))
         self.dwell_time_label.setText(QCoreApplication.translate("MainWindow", u"Dwell Time", None))
         self.dwell_time_doubleSpinBox.setSuffix(QCoreApplication.translate("MainWindow", u" s", None))
+        self.label_adjust.setText(QCoreApplication.translate("MainWindow", u"Adjust to", None))
+        self.groupBox_E_component.setTitle("")
+        self.radioButton_Ex.setText(QCoreApplication.translate("MainWindow", u"Ex", None))
+        self.radioButton_Ey.setText(QCoreApplication.translate("MainWindow", u"Ey", None))
+        self.radioButton_Ez.setText(QCoreApplication.translate("MainWindow", u"Ez", None))
+        self.radioButton_absE.setText(QCoreApplication.translate("MainWindow", u"|E|", None))
+        self.radioButton_Largest_E.setText(QCoreApplication.translate("MainWindow", u"Largest", None))
+        self.radioButton_Auto.setText(QCoreApplication.translate("MainWindow", u"Auto", None))
         self.frequency_groupBox.setTitle(QCoreApplication.translate("MainWindow", u"Frequency", None))
         self.freq_start_label.setText(QCoreApplication.translate("MainWindow", u"Start", None))
         self.freq_start_doubleSpinBox.setSuffix(QCoreApplication.translate("MainWindow", u" MHz", None))
@@ -552,9 +610,15 @@ class Ui_MainWindow(object):
         ___qtablewidgetitem13 = self.table_tableWidget.horizontalHeaderItem(1)
         ___qtablewidgetitem13.setText(QCoreApplication.translate("MainWindow", u"Frequency [MHz]", None));
         ___qtablewidgetitem14 = self.table_tableWidget.horizontalHeaderItem(2)
-        ___qtablewidgetitem14.setText(QCoreApplication.translate("MainWindow", u"CW E-Field [V/m]", None));
+        ___qtablewidgetitem14.setText(QCoreApplication.translate("MainWindow", u"CW Ex [V/m]", None));
         ___qtablewidgetitem15 = self.table_tableWidget.horizontalHeaderItem(3)
-        ___qtablewidgetitem15.setText(QCoreApplication.translate("MainWindow", u"Status", None));
+        ___qtablewidgetitem15.setText(QCoreApplication.translate("MainWindow", u"CW Ey [V/m]", None));
+        ___qtablewidgetitem16 = self.table_tableWidget.horizontalHeaderItem(4)
+        ___qtablewidgetitem16.setText(QCoreApplication.translate("MainWindow", u"CW Ez [V/m]", None));
+        ___qtablewidgetitem17 = self.table_tableWidget.horizontalHeaderItem(5)
+        ___qtablewidgetitem17.setText(QCoreApplication.translate("MainWindow", u"CW |E| [V/m]", None));
+        ___qtablewidgetitem18 = self.table_tableWidget.horizontalHeaderItem(6)
+        ___qtablewidgetitem18.setText(QCoreApplication.translate("MainWindow", u"Status", None));
         self.centralwidget_tabWidget.setTabText(self.centralwidget_tabWidget.indexOf(self.table_tab), QCoreApplication.translate("MainWindow", u"Table", None))
         self.centralwidget_tabWidget.setTabText(self.centralwidget_tabWidget.indexOf(self.log_tab), QCoreApplication.translate("MainWindow", u"Log", None))
         self.menuFile.setTitle(QCoreApplication.translate("MainWindow", u"File", None))

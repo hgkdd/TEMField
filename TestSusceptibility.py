@@ -1,5 +1,7 @@
 import os
 
+import numpy as np
+
 from scuq import si,quantities
 from mpy.tools import util, mgraph
 from mpy.env.univers.AmplifierTest import dBm2W
@@ -16,7 +18,8 @@ class TestSusceptibiliy(Measure):
              e_target=None,
              dotfile=None,
              SearchPath=None,
-             leveler_par=None):
+             leveler_par=None,
+             adjust_to_setting=None):
         if names is None:
             self.names = {
                 'sg': 'sg',
@@ -28,8 +31,30 @@ class TestSusceptibiliy(Measure):
         else:
             self.names = names
 
+        if adjust_to_setting == None:
+            self.adjust_to_setting = 'auto'
+
+        self.main_e_component = None
+
         def __datafunc(data):
-            return data[0]  # x-coordinate
+            if self.adjust_to_setting == 'x':
+                return data[0]  # x-coordinate
+            elif self.adjust_to_setting == 'y':
+                return data[1]  # y-coordinate
+            elif self.adjust_to_setting == 'z':
+                return data[2]  # y-coordinate
+            elif self.adjust_to_setting == 'largest':
+                return max(data)
+            elif self.adjust_to_setting == 'mag':
+                return np.sqrt((_d*_d for _d in data))
+            else:   # auto
+                if self.main_e_component in (0,1,2):
+                    return data[self.main_e_component]
+                else:
+                    self.main_e_component = np.argmax(data)
+                    return data[self.main_e_component]
+
+
         if datafunc is None:
             self.datafunc = __datafunc
         else:
