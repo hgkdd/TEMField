@@ -51,7 +51,7 @@ class TestSusceptibiliy(Measure):
                 if self.main_e_component in (0,1,2):
                     return data[self.main_e_component]
                 else:
-                    self.main_e_component = np.argmax(data)
+                    self.main_e_component = data.index(max(data))
                     return data[self.main_e_component]
 
 
