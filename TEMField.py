@@ -15,7 +15,7 @@ from PySide6.QtCore import Qt, QLocale, QSettings, QTimer, QThreadPool
 from PySide6.QtWidgets import (QApplication, QMainWindow, QMessageBox,
                                QFileDialog, QTableWidgetItem, QVBoxLayout, QWidget)
 from scipy.sparse import eye_array
-from traits.trait_types import self
+#from traits.trait_types import self
 
 from EUT import EUT_status, simple_eut_status
 from mpy.device.switch import switch
