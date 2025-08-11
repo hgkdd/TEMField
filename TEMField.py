@@ -14,13 +14,9 @@ from matplotlib.figure import Figure
 from PySide6.QtCore import Qt, QLocale, QSettings, QTimer, QThreadPool
 from PySide6.QtWidgets import (QApplication, QMainWindow, QMessageBox,
                                QFileDialog, QTableWidgetItem, QVBoxLayout, QWidget)
-from scipy.sparse import eye_array
-#from traits.trait_types import self
 
 from EUT import EUT_status, simple_eut_status
-from mpy.device.switch import switch
 
-# import mpy.device.prb_lumiloop_lsprobe as lumiprb
 from mpy.tools.spacing import logspace, linspace
 from mpy.tools.util import tstamp
 from mpy.tools.sin_fit import fit_sin
@@ -490,7 +486,9 @@ class MainWindow(QMainWindow):
         return tstr
 
     def save_Table(self):
-        path, _ = QFileDialog.getSaveFileName(self, 'Save as CSV', self.table_save_dir, '(*.csv)')
+        path, _ = QFileDialog.getSaveFileName(self, caption='Save as CSV',
+                                              dir=self.table_save_dir, filter='(*.csv)',
+                                              options=QFileDialog.Option.DontUseNativeDialog)
         self.table_save_dir = os.path.dirname(path)
         if path:
             columns = range(self.ui.table_tableWidget.columnCount())
