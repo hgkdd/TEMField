@@ -313,7 +313,7 @@ class MainWindow(QMainWindow):
                     e_target=self.cw,
                     names=self.names,
                     dotfile=self.dotfile,
-                    SearchPath=self.searchpath,
+                    SearchPath=eval(self.searchpath),
                     adjust_to_setting=self.adjust_to_setting)
             self.meas.init_measurement(self.am)
             self.remaining_freqs = self.freqs.copy()
@@ -345,7 +345,7 @@ class MainWindow(QMainWindow):
                                                    ".",
                                                    "dot files (*.dot)")
         dotpath, self.dotfile = os.path.split(fullfile)
-        self.searchpath = [dotpath,]
+        self.searchpath = str(['.', dotpath])
         self.ui.graph_file_lineEdit.setText(self.dotfile)
         self.ui.search_path_lineEdit.setText(str(self.searchpath))
         # print(self.dotfile, self.searchpath)
@@ -392,7 +392,7 @@ class MainWindow(QMainWindow):
         self.am = float(self.settings.value("fieldstrength/am", 80.))
         self.dwell_time = float(self.settings.value("settings/dwell_time", 1.))
         self.dotfile = self.settings.value("settings/dotfile", os.path.abspath('./conf/gtem.dot'))
-        self.searchpath = self.settings.value("settings/searchpath", ['.', os.path.abspath('./conf')])
+        self.searchpath = self.settings.value("settings/searchpath", str(['.', os.path.abspath('./conf')]))
         self.names = self.settings.value("settings/names", {'sg': 'sg', 'a1': 'amp1', 'a2': 'amp2',
                                                             'tem': 'gtem', 'fp': 'prb'})
         self.eut_description = self.settings.value("settings/eut-description", '')
