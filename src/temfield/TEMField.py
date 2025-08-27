@@ -511,9 +511,7 @@ class MainWindow(QMainWindow):
                         for column in columns)
                 self.table_is_unsaved = False
 
-
-if __name__ == "__main__":
-    #QApplication.shutdown()
+def main():
     if not QApplication.instance():
         app = QApplication(sys.argv)
     else:
@@ -528,3 +526,6 @@ if __name__ == "__main__":
     widget = MainWindow(settings)
     widget.show()
     sys.exit(app.exec())
+
+if __name__ == "__main__":
+    main()
