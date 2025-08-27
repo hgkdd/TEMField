@@ -15,18 +15,18 @@ from PySide6.QtCore import Qt, QLocale, QSettings, QTimer, QThreadPool
 from PySide6.QtWidgets import (QApplication, QMainWindow, QMessageBox,
                                QFileDialog, QTableWidgetItem, QVBoxLayout, QWidget)
 
-from EUT import EUT_status, simple_eut_status
+from .EUT import EUT_status, simple_eut_status
 
 from mpylab.tools.spacing import logspace, linspace
 from mpylab.tools.util import tstamp
 from mpylab.tools.sin_fit import fit_sin
 
-from TestSusceptibility import TestSusceptibiliy
+from .TestSusceptibility import TestSusceptibiliy
 
 # Important:
 # You need to run the following command to generate the mainwindow.py file
 #     pyside6-uic mainwindow.ui -o mainwindow.py
-from mainwindow import Ui_MainWindow
+from .mainwindow import Ui_MainWindow
 
 
 class MainWindow(QMainWindow):
