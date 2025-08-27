@@ -17,9 +17,9 @@ from PySide6.QtWidgets import (QApplication, QMainWindow, QMessageBox,
 
 from EUT import EUT_status, simple_eut_status
 
-from mpy.tools.spacing import logspace, linspace
-from mpy.tools.util import tstamp
-from mpy.tools.sin_fit import fit_sin
+from mpylab.tools.spacing import logspace, linspace
+from mpylab.tools.util import tstamp
+from mpylab.tools.sin_fit import fit_sin
 
 from TestSusceptibility import TestSusceptibiliy
 

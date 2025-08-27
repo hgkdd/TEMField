@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 # import pyvisa
 
-from mpy.device.driver import DRIVER
-from mpy.tools.Configuration import strbool
-from mpy.tools.Configuration import fstrcmp
-from mpy.tools.util import format_block
+from mpylab.device.driver import DRIVER
+from mpylab.tools.Configuration import strbool
+from mpylab.tools.Configuration import fstrcmp
+from mpylab.tools.util import format_block
 
 
 class SWController(DRIVER):

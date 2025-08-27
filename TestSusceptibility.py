@@ -3,9 +3,9 @@ import os
 import numpy as np
 
 from scuq import si,quantities
-from mpy.tools import util, mgraph
-from mpy.env.univers.AmplifierTest import dBm2W
-from mpy.env.Measure import Measure
+from mpylab.tools import util, mgraph
+from mpylab.env.univers.AmplifierTest import dBm2W
+from mpylab.env.Measure import Measure
 
 class TestSusceptibiliy(Measure):
     def __init__(self, parent=None):
