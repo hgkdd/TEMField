@@ -1,3 +1,7 @@
+[build-system]
+requires = ["uv_build"]
+build-backend = "uv_build"
+
 [project]
 name = "temfield"
 version = "0.1.0"
@@ -35,6 +39,7 @@ dependencies = [
     "numpy>=1.24.4",
     "pyside6>=6.6.3.1",
 ]
+
 [project.scripts]
 temfield = "temfield.TEMField:main"
 
